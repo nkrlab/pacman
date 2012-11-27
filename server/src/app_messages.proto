@@ -1,0 +1,47 @@
+// Copyright (C) 2012 Nexon Korea Corporation All Rights Reserved.
+//
+// This work is confidential and proprietary to Nexon Korea Corporation and
+// must not be used, disclosed, copied, or distributed without the prior
+// consent of Nexon Korea Corporation.
+
+// source: pacman_client_messages.proto
+//         pacman_server_messages.proto
+
+import "funapi/account/account_messages.proto";
+import "pacman_client_messages.proto";
+import "pacman_server_messages.proto";
+
+message ClientAppMessageType {
+  enum Type {
+    kLoadLevel = 1001;
+    kPacmanMove = 1002;
+    kRequestTick = 1003;
+    kShowRoomList = 1004;
+    kMakeRoomGameStart = 1005;
+    kGameEndLeaveRoom = 1006;
+  }
+}
+
+extend ClientAppMessage {
+  optional ClientAppMessageType.Type client_message_type = 1000;
+
+  optional LoadLevel load_level = 1001;
+  optional PacmanMove pacman_move = 1002;
+  optional RequestTick request_tick = 1003;
+  optional ShowRoomList show_room_list = 1004;
+  optional MakeRoomGameStart make_room_game_start = 1005;
+  optional GameEndLeaveRoom game_end_reave_room = 1006;
+}
+
+message ServerAppMessageType {
+  enum Type {
+    kServerAppDummyMessage = 1001;  // just as a placeholder.
+  }
+}
+
+
+extend ServerAppMessage {
+  optional ServerAppMessageType.Type server_message_type = 1000;
+
+  optional ServerAppDummyMessage dummy = 1001;
+}

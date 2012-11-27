@@ -1,0 +1,80 @@
+{
+  "World" : {
+    "attributes" : {
+      "game_rooms" : {
+        "value" : []
+      },
+      "players" : {
+        "value" : {}
+      }
+    }
+  },
+  "GameRoom" : {
+    "attributes" : {
+      "players" : {
+        "value" : {}
+      },
+      "name" : {
+        "value" : ""
+      }
+    }
+  },
+  "Player" : {
+    "attributes" : {
+      "name" : {
+        "value" : ""
+      },
+      "free_life" : {
+        "value" : 1000
+      },
+      "remain_lives" : {
+        "value" : 3
+      },
+      "game_points" : {
+        "value" : 0
+      },
+      "locations" : {
+        "value" : ""
+      },
+      "directions" : {
+        "value" : ""
+      },
+      "start_points" : {
+        "value" : ""
+      },
+      "invincible" : {
+        "value" : 0
+      },
+      "left_pellets" : {
+        "value" : 0
+      },
+      "level" : {
+        "value" : ""
+      },
+      "level_number" : {
+        "value" : 0
+      },
+      "ghosts_in_a_row" : {
+        "value" : 0
+      },
+      "time_left" : {
+        "value" : 0
+      },
+      "characters_lives" : {
+        "value" : ""
+      },
+      "rand_internal" : {
+        "value" : 0
+      },
+      "slower_ghosts" : {
+        "value" : 0
+      },
+      "invincible_time" : {
+        "value" : 0
+      },
+      "exit_message" : {
+        "value" : ""
+      }
+    }
+  }
+}

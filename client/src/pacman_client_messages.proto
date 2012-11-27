@@ -1,0 +1,26 @@
+// Copyright (C) 2012 Nexon Korea Corporation All Rights Reserved.
+//
+// This work is confidential and proprietary to Nexon Korea Corporation and
+// must not be used, disclosed, copied, or distributed without the prior
+// consent of Nexon Korea Corporation.
+
+message LoadLevel {
+  optional int32 level_number = 1;
+}
+
+message PacmanMove {
+  optional int32 pacman_direction = 2;
+}
+
+message RequestTick {
+}
+
+message ShowRoomList {
+}
+
+message MakeRoomGameStart {
+  optional string name = 1;
+}
+
+message GameEndLeaveRoom {
+}
