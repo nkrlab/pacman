@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "components": [
+    {
+      "name": "PacmanServer",
+      "dependency": [
+        "EventDispatcher",
+        "Logging",
+        "Network",
+        "ObjectRegistry",
+        "ObjectAttributeAccess"
+      ]
+    }
+  ]
+}

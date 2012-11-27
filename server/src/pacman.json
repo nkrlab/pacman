@@ -1,0 +1,140 @@
+{
+  "attributes" : {
+    "players" : {
+      "data_type" : {
+        "base" : "object_map",
+        "ownership" : "owner",
+        "capacity" : 16
+      },
+      "persistent" : false
+    },
+    "name" : {
+      "data_type" : {
+        "base" : "string",
+        "default" : "(no name)",
+        "max_length" : 128
+      },
+      "persistent" : true
+    },
+    "free_life" : {
+      "data_type" : {
+        "base" : "integer",
+        "default" : 1000,
+        "min" : 0,
+        "max" : 999999
+      },
+      "persistent" : false
+    },
+    "remain_lives" : {
+      "data_type" : {
+        "base" : "integer",
+	"default" : 3,
+	"min" : 0,
+	"max" : 999999
+      },
+      "persistent" : false
+    },
+    "game_points" : {
+      "data_type" : {
+        "base" : "integer",
+        "default" : 0,
+        "min" : 0,
+        "max" : 99999
+      },
+      "persistent" : false
+    },
+    "locations" : {
+      "data_type" : {
+        "base" : "string",
+        "default" : "(no name)",
+        "max_length" : 10
+      },
+      "persistent" : false
+    },
+    "directions" : {
+      "data_type" : {
+        "base" : "string",
+        "default" : "(no name)",
+        "max_length" : 10
+      },
+      "persistent" : false
+    },
+    "start_points" : {
+      "data_type" : {
+        "base" : "string",
+        "default" : "(no name)",
+        "max_length" : 10
+      },
+      "persistent" : false
+    },
+    "invincible" : {
+      "data_type" : {
+        "base" : "integer",
+        "default" : 0,
+        "min" : 0,
+        "max" : 1
+      },
+      "persistent" : false
+    },
+    "left_pellets" : {
+      "data_type" : {
+        "base" : "integer",
+        "default" : 0,
+        "min" : 0,
+        "max" : 99999
+      },
+      "persistent" : false
+    },
+    "level" : {
+      "data_type" : {
+        "base" : "string",
+        "default" : "(no name)",
+        "max_length" : 812
+      },
+      "persistent" : false
+    },
+    "level_number" : {
+      "data_type" : {
+        "base" : "integer",
+        "default" : 0,
+        "min" : 0,
+        "max" : 9
+      },
+      "persistent" : false
+    },
+    "ghosts_in_a_row" : {
+      "data_type" : {
+        "base" : "integer",
+        "default" : 0,
+        "min" : 0,
+        "max" : 9
+      },
+      "persistent" : false
+    },
+    "time_left" : {
+      "data_type" : {
+        "base" : "integer",
+        "default" : 0,
+        "min" : 0,
+        "max" : 9
+      },
+      "persistent" : false
+    },
+    "characters_lives" : {
+      "data_type" : {
+        "base" : "string",
+        "default" : "(no name)",
+        "max_length" : 5
+      },
+      "persistent" : false
+    },
+    "exit_message" : {
+      "data_type" : {
+        "base" : "string",
+        "default" : "(no name)",
+        "max_length" : 256
+      },
+      "persistent" : false
+    }
+  }
+}
