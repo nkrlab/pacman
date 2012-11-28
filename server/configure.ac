@@ -82,14 +82,6 @@ AC_CHECK_LIB([json_spirit], [exit], , AC_MSG_ERROR([json_spirit is required]))
 AC_CHECK_LIB([ltdl], [lt_dlopen], , AC_MSG_ERROR([ltdl is required])) 
 AC_CHECK_LIB([popt], [poptGetContext], , AC_MSG_ERROR([popt is required]))
 AC_CHECK_LIB([protobuf], [memcpy], , AC_MSG_ERROR([protobuf is required]))
-AC_CHECK_LIB([xmlrpc], [xmlrpc_read_int], , AC_MSG_ERROR([xmlrpc is required]))
-AC_CHECK_LIB([xmlrpc_client], [xmlrpc_client_init], ,
-             AC_MSG_ERROR([xmlrpc_client is required]))
-AC_CHECK_LIB([xmlrpc_util], [xmlrpc_env_init], ,
-             AC_MSG_ERROR([xmlrpc_util is required]))
-AC_CHECK_LIB([mongoclient], [exit], ,
-             AC_MSG_ERROR([mongoclient is required]))
-
 
 dnl Optional features. Don't have to stop even if not exist.
 AX_CHECK_COVERAGE
