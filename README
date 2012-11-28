@@ -1,0 +1,5 @@
+This project illustrates examples as different branches.
+The following branches (i.e. examples) are available.
+
+  stage1-single-play: the most basic one. it's for a single play without a login step.
+  stage2-single-with-login: stage1 plus a login step.
