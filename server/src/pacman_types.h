@@ -16,10 +16,10 @@ namespace pacman {
 
   using fun::string;
   using fun::shared_ptr;
-  using fun::object::Pacman;
-  using fun::object::PacmanPtr;
-  using fun::object::PacmanPtrVector;
-  using fun::object::PacmanPtrMap;
+  using fun::Pacman;
+  using fun::PacmanPtr;
+  using fun::PacmanPtrVector;
+  using fun::PacmanPtrMap;
 
   namespace protobuf = google::protobuf;
 }  // namespace pacman
