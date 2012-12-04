@@ -8,6 +8,7 @@
 #include <termios.h>
 #endif
 
+#include <arpa/inet.h>
 #include <json_spirit.h>
 #include <boost/asio.hpp>
 #include <boost/algorithm/string/split.hpp>
@@ -55,7 +56,7 @@ void PackStringToBuffer(const std::string &strarg,
   size_t uuid_size = boost::uuids::uuid::static_size();
 
   uint32_t payload_length = uuid_size + strarg.size();
-  uint32_t packed_length = ::htonl(payload_length);
+  uint32_t packed_length = htonl(payload_length);
 
   *arg_length = length_size + payload_length;
 
@@ -223,7 +224,7 @@ class GivingTreeProtocolHandler {
     while (current_buffer_index_ > sizeof(uint32_t)) {
       int packed_length;
       ::memcpy(&packed_length, read_buffer_, sizeof(uint32_t));
-      size_t payload_length = ::ntohl(packed_length);
+      size_t payload_length = ntohl(packed_length);
       if (payload_length > (buffer_size_/2)) {
         // payload length가 buffer 크기의 절반보다 크다면 비정상으로 간주함.
         assert(false);
