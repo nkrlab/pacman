@@ -12,7 +12,9 @@
 #include <unistd.h>
 #include <time.h>
 #include <string>
+#include <vector>
 
+#include "src/pacman_app.h"
 #include "src/pacman_constants.h"
 #include "src/pacman_render.h"
 #include "src/pacman_network.h"
@@ -20,14 +22,17 @@
 
 namespace {
 
+// Game Continuous
+enum GameContinuous { kNormal = 0, kLevelEnd, kGoLogin };
+
 // How much of a delay is in the game
 const int kSpeedOfGame = 175;
 
 // The lastet inputed key
 int virtualized_key = 0;
 
-// Is Level End
-bool is_level_end = false;
+// Game Continuous Variable34
+GameContinuous game_continuous = kNormal;
 
 // Temporary stored data from server
 int store_game_points = 0;
@@ -45,21 +50,6 @@ std::vector<std::vector<int> > store_level;
 bool need_sleep = false;
 
 
-void DoExitProgram(const char *kMessage) {
-  // send log out message
-  SendMessage(kLogout, kNoUse);
-
-  // terminate network
-  NetworkTerminate();
-
-  // destroy windows
-  DestroyWindows();
-
-  printf("%s\n", kMessage);
-  exit(0);
-}
-
-
 void GetInput() {
   static int chtmp = 'a';
   int ch = getch();
@@ -67,7 +57,8 @@ void GetInput() {
   // Buffer input
   if (ch == ERR)
     ch = chtmp;
-  chtmp = ch;
+  if ((ch != 'q') && (ch != 'Q'))
+    chtmp = ch;
 
   switch (ch) {
   case KEY_UP:
@@ -92,7 +83,7 @@ void GetInput() {
     break;
   case 'q':
   case 'Q':
-    DoExitProgram("Bye");
+    game_continuous = kGoLogin;
     break;
   }
 }
@@ -112,11 +103,11 @@ void Delay() {
 
 void MainLoop() {
   RefreshWindow();
-  usleep(1000000);
+  usleep(100000);
 
   while (true) {
     // check level end
-    if (is_level_end)
+    if (game_continuous != kNormal)
       break;
 
     // Net Request Server Tick
@@ -141,11 +132,25 @@ void MainLoop() {
     SendMessage(kPacmanMove, virtualized_key);
   };
 
-  usleep(1000000);
+  usleep(100000);
 }
 
 }  // End of anonymous namespace
 
+
+void DoExitProgram(const char *kMessage) {
+  // send log out message
+  SendMessage(kLogout, kNoUse);
+
+  // terminate network
+  NetworkTerminate();
+
+  // destroy windows
+  DestroyWindows();
+
+  printf("%s\n", kMessage);
+  exit(0);
+}
 
 void OnChangeGamePoints(const int kGamePoints) {
   store_game_points = kGamePoints;
@@ -164,7 +169,7 @@ void OnChangeLeftPellets(const int kLeftPellets) {
 
 void OnChangeLevelNumber(const int kLevelNumber) {
   if (store_level_number != kLevelNumber) {
-    is_level_end = true;
+    game_continuous = kLevelEnd;
   }
   store_level_number = kLevelNumber;
 }
@@ -247,12 +252,12 @@ void OnChangeCharactersLives(const std::string &kCharactersLives) {
 }
 
 
-void OnChangeExitMessage(const std::string &kExitMessage) {
-  DoExitProgram(kExitMessage.c_str());
+void OnChangeExitMessage(const std::string &/*kExitMessage*/) {
+  game_continuous = kGoLogin;
 }
 
 
-int main(int argc, char *argv[100]) {
+int main(int /*argc*/, char **/*argv*/) {
   srand(time(NULL));
 
   // Create Window
@@ -260,31 +265,26 @@ int main(int argc, char *argv[100]) {
 
   // Network Initialize();
   NetworkInitialize();
-  SendMessage(kLogin, kNoUse);
 
-  // Show intro "movie"
-  IntroScreen();
-
-  // Send Login Message
-
-  int j = 1;
-  // They want to start at a level 1-9
-  if (argc > 1) {
-    for (int i = '1'; i <= '9'; ++i) {
-      if (i == argv[1][0])
-        j = i - '0';
-    }
-  }
+ LOGIN:
+  // Login process
+  LoginScreen();
 
   // Load 9 levels, 1 by 1, if you can beat all 9 levels in a row,
   // you're awesome
-  for (int i = j; i < 10; ++i) {
+  for (int i = 1; i < 10; ++i) {
     // Send Level Number
     SendMessage(kLoadLevel, i);
 
     MainLoop();
 
-    is_level_end = false;
+    if (game_continuous == kLevelEnd)
+      game_continuous = kNormal;
+    else if (game_continuous == kGoLogin) {
+      SendMessage(kLogout, kNoUse);
+      game_continuous = kNormal;
+      goto LOGIN;
+    }
   }
 
   DoExitProgram("Good bye!");

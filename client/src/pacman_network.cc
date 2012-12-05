@@ -338,7 +338,8 @@ void NetworkInitialize() {
 }
 
 
-void SendMessage(const kPacketType kType, const int value) {
+void SendMessage(const kPacketType kType, const char *id_string,
+                 const char *passward_string) {
   // set account message type
   ClientAccountMessage ca_msg;
   switch (kType) {
@@ -347,9 +348,34 @@ void SendMessage(const kPacketType kType, const int value) {
 
       // account
       AccountLoginRequest *login = ca_msg.mutable_login();
-      login->set_account_id("minsu");
-      login->set_auth_key("park");
+      login->set_account_id(id_string);
+      login->set_auth_key(passward_string);
     }
+    break;
+  case kLoadLevel:  // handling on other function with different arguments
+  case kPacmanMove:
+  case kRequestTick:
+  case kLogout:
+    assert(false);
+    break;
+  }
+
+  // send
+  std::string data;
+  boost::shared_ptr<unsigned char> buffer;
+  int buffer_size;
+  ca_msg.SerializeToString(&data);
+  PackStringToBuffer(data, &buffer, &buffer_size);
+  handler->Write(buffer, buffer_size);
+}
+
+
+void SendMessage(const kPacketType kType, const int value) {
+  // set account message type
+  ClientAccountMessage ca_msg;
+  switch (kType) {
+    case kLogin:  // handling on other function with different arguments
+      assert(false);
     break;
     case kLoadLevel: {
       ca_msg.set_type(ClientAccountMessage::kClientAppMessage);
