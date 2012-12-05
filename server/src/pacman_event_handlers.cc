@@ -51,7 +51,9 @@ void OnLoadLevel(const PacmanPtr &/*player*/, const ::LoadLevel &msg) {
   // 여러가지 attributes의 초기값들을 지정한다.
   // 이 값들은 자동으로 클라이언트에 전송된다.
   the_world->set_level_number(level_number);
-  the_world->set_remain_lives(3);
+  // 맵이 1레벨일때만 remain life 값 지정.
+  if (level_number == 1)
+    the_world->set_remain_lives(3);
   the_world->set_game_points(0);
   the_world->set_time_left(0);
   the_world->set_ghosts_in_a_row(0);
