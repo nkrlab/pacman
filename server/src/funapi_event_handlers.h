@@ -4,8 +4,8 @@
 // must not be used, disclosed, copied, or distributed without the prior
 // consent of Nexon Korea Corporation.
 
-#ifndef PACMAN_SERVER_SRC_FUNAPI_EVENT_HANDLERS_H_
-#define PACMAN_SERVER_SRC_FUNAPI_EVENT_HANDLERS_H_
+#ifndef SERVER_SRC_FUNAPI_EVENT_HANDLERS_H_
+#define SERVER_SRC_FUNAPI_EVENT_HANDLERS_H_
 
 #include <funapi/account/account_event_handler_registry.h>
 #include <funapi/account/account.h>
@@ -45,4 +45,4 @@ namespace pacman {
 
 }  // namespace pacman
 
-#endif  // PACMAN_SERVER_SRC_FUNAPI_EVENT_HANDLERS_H_
+#endif  // SERVER_SRC_FUNAPI_EVENT_HANDLERS_H_

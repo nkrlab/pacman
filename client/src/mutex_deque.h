@@ -4,8 +4,8 @@
 // must not be used, disclosed, copied, or distributed without the prior
 // consent of Nexon Korea Corporation.
 
-#ifndef PACMAN_CLIENT_SRC_MUTEX_DEQUE_H_
-#define PACMAN_CLIENT_SRC_MUTEX_DEQUE_H_
+#ifndef CLIENT_SRC_MUTEX_DEQUE_H_
+#define CLIENT_SRC_MUTEX_DEQUE_H_
 
 #include <boost/shared_ptr.hpp>
 #include <boost/thread/mutex.hpp>
@@ -85,4 +85,4 @@ MutexDeque<T>::CreateInfo() const {
 }  // namespace util
 }  // namespace fun
 
-#endif  // PACMAN_CLIENT_SRC_MUTEX_DEQUE_H_
+#endif  // CLIENT_SRC_MUTEX_DEQUE_H_

@@ -4,8 +4,8 @@
 // must not be used, disclosed, copied, or distributed without the prior
 // consent of Nexon Korea Corporation.
 
-#ifndef PACMAN_SERVER_SRC_PACMAN_EVENT_HANDLERS_H_
-#define PACMAN_SERVER_SRC_PACMAN_EVENT_HANDLERS_H_
+#ifndef SERVER_SRC_PACMAN_EVENT_HANDLERS_H_
+#define SERVER_SRC_PACMAN_EVENT_HANDLERS_H_
 
 #include <funapi/account/account.h>
 #include <funapi/common/types.h>
@@ -36,4 +36,4 @@ void OnRequestTick(const PacmanPtr &player, const ::RequestTick &msg);
 
 }  // namespace pacman
 
-#endif  // PACMAN_SERVER_SRC_PACMAN_EVENT_HANDLERS_H_
+#endif  // SERVER_SRC_PACMAN_EVENT_HANDLERS_H_

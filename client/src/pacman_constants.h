@@ -4,8 +4,8 @@
 // must not be used, disclosed, copied, or distributed without the prior
 // consent of Nexon Korea Corporation.
 
-#ifndef PACMAN_CLIENT_SRC_PACMAN_CONSTANTS_H_
-#define PACMAN_CLIENT_SRC_PACMAN_CONSTANTS_H_
+#ifndef CLIENT_SRC_PACMAN_CONSTANTS_H_
+#define CLIENT_SRC_PACMAN_CONSTANTS_H_
 
 
 const int kChrSize = 5;
@@ -41,4 +41,4 @@ enum { kDirBack = -1,
        kDirFront };
 
 
-#endif  // PACMAN_CLIENT_SRC_PACMAN_CONSTANTS_H_
+#endif  // CLIENT_SRC_PACMAN_CONSTANTS_H_
