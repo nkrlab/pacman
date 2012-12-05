@@ -7,8 +7,8 @@
 #ifndef PACMAN_CLIENT_SRC_MUTEX_DEQUE_H_
 #define PACMAN_CLIENT_SRC_MUTEX_DEQUE_H_
 
+#include <boost/shared_ptr.hpp>
 #include <boost/thread/mutex.hpp>
-#include <funapi/common/types.h>
 
 #include <deque>
 
@@ -30,7 +30,7 @@ class MutexDeque {
   const T &Front();
   void Pop();
   bool Contains() const;
-  shared_ptr<BaseDeque> CreateInfo() const;  // for debugging.
+  boost::shared_ptr<BaseDeque> CreateInfo() const;  // for debugging.
 
  private:
   mutable boost::mutex mutex_;
@@ -72,9 +72,9 @@ bool MutexDeque<T>::Contains() const {
 
 
 template <typename T>
-shared_ptr<typename MutexDeque<T>::BaseDeque>
+boost::shared_ptr<typename MutexDeque<T>::BaseDeque>
 MutexDeque<T>::CreateInfo() const {
-  shared_ptr<BaseDeque> clone(new BaseDeque());
+  boost::shared_ptr<BaseDeque> clone(new BaseDeque());
   {
     boost::mutex::scoped_lock lock(mutex_);
     *clone = deque_;
