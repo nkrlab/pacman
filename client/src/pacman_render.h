@@ -20,7 +20,7 @@ void CreateWindows(const int kXStart, const int kYStart,
                    const int kXWidth, const int kYHeight);
 
 // Show introduction screen and menu
-void IntroScreen();
+void LoginScreen();
 
 // Refresh display
 void DrawWindow(const int kLives, const int kLevelNumber,

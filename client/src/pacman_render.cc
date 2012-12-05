@@ -8,7 +8,10 @@
 #include <stdlib.h>
 #include <curses.h>
 #include <unistd.h>
+#include <string>
 
+#include "src/pacman_app.h"
+#include "src/pacman_network.h"
 #include "src/pacman_render.h"
 
 
@@ -30,9 +33,9 @@ void InitCurses() {
   curs_set(0);
   keypad(stdscr, TRUE);
   nodelay(stdscr, TRUE);
-  nonl();
   cbreak();
   noecho();
+  nonl();
 
   init_pair(kNormal,    COLOR_WHITE,   COLOR_BLACK);
   init_pair(kWall,      COLOR_WHITE,   COLOR_WHITE);
@@ -64,6 +67,43 @@ void CheckScreenSize() {
   }
 }
 
+
+void GetInputString(std::string *str, bool is_id_string) {
+  *str = "";
+  int y_pos = 22;
+  if (!is_id_string)
+    y_pos = 23;
+
+  while (true) {
+    int ch;
+    // non blocking wait for standard input
+    ch = getch();
+    if (ch != ERR) {
+      if ((ch == '\n') || (ch == '\t')) {
+        return;
+      } else if (ch == KEY_BACKSPACE) {
+        size_t size = str->size();
+        if (size >= 1) {
+          str->resize(size-1);
+      }
+    } else {
+      if (isprint(ch)) {
+        if (is_id_string)
+         *str += ch;
+        else
+          *str += '*';
+      }
+    }
+    }
+
+    // between 12~column size clear
+    mvwprintw(win_game, y_pos, 12, "%s", "                ");
+    mvwprintw(win_game, y_pos, 12, "%s", str->c_str());
+
+    wrefresh(win_game);
+  }
+}
+
 }  // End of anonymous namespace
 
 
@@ -77,82 +117,30 @@ void CreateWindows(const int kXStart, const int kYStart,
 }
 
 
-void IntroScreen() {
-  int ghost_speed = 23;
-
-  getch();
-  getch();
-  getch();
-
-  mvwprintw(win_game, 20, 8, "Press any key...");
-
-  // Scroll Pacman to middle of screen
-  for (int i = 0; i < 13; ++i) {
-    if (getch() != ERR)
-      return;
-
-    wattron(win_game, COLOR_PAIR(kPacman));
-    mvwprintw(win_game, 8, i, " C");
-    wrefresh(win_game);
-    usleep(100000);
-  }
-
-  // Show "Pacman"
-  wattron(win_game, COLOR_PAIR(kPacman));
-  mvwprintw(win_game, 8, 12, "PACMAN");
+void LoginScreen() {
+  wclear(win_game);
   wrefresh(win_game);
-  usleep(1000000);
+  wclear(win_status);
+  wrefresh(win_status);
+  wattron(win_game, COLOR_PAIR(kNormal));
 
-  // Ghosts Chase Pacman
-  for (int i = 0; i < 23; ++i) {
-    if (getch() != ERR)
-      return;
-    wattron(win_game, COLOR_PAIR(kPellet));
-    mvwprintw(win_game, 13, 23, "*");
-    wattron(win_game, COLOR_PAIR(kPacman));
-    mvwprintw(win_game, 13, i, " C");
-    wattron(win_game, COLOR_PAIR(kGhost1));
-    mvwprintw(win_game, 13, i-3, " &");
-    wattron(win_game, COLOR_PAIR(kGhost3));
-    mvwprintw(win_game, 13, i-5, " &");
-    wattron(win_game, COLOR_PAIR(kGhost2));
-    mvwprintw(win_game, 13, i-7, " &");
-    wattron(win_game, COLOR_PAIR(kGhost4));
-    mvwprintw(win_game, 13, i-9, " &");
-    wrefresh(win_game);
-    usleep(100000);
-  }
+  curs_set(1);
+  nl();
 
-  usleep(150000);
+  mvwprintw(win_game, 13, 3, "Enter your ID & Passwd");
+  mvwprintw(win_game, 22, 1, "ID       : ");
+  mvwprintw(win_game, 23, 1, "Password : ");
 
-  // Pacman Chases Ghosts
-  for (int i = 25; i > 2; --i) {
-    if (getch() != ERR)
-      return;
-    wattron(win_game, COLOR_PAIR(kPellet));
-    mvwprintw(win_game, 13, 23, " ");
+  std::string id_string, password_string;
+  GetInputString(&id_string, true);
+  GetInputString(&password_string, false);
 
-    // Make ghosts half as fast
-    if (i%2)
-      --ghost_speed;
+  SendMessage(kLogin, id_string.c_str(), password_string.c_str());
 
-    wattron(win_game, COLOR_PAIR(kBlueGhost));
-    mvwprintw(win_game, 13, ghost_speed-9, "& & & &");
-    wattron(win_game, COLOR_PAIR(kPacman));
-    mvwprintw(win_game, 13, ghost_speed-9+1, " ");
-    wattron(win_game, COLOR_PAIR(kPacman));
-    mvwprintw(win_game, 13, ghost_speed-9+3, " ");
-    wattron(win_game, COLOR_PAIR(kPacman));
-    mvwprintw(win_game, 13, ghost_speed-9+5, " ");
-    wattron(win_game, COLOR_PAIR(kPacman));
-    mvwprintw(win_game, 13, ghost_speed-9+7, " ");
-    wattron(win_game, COLOR_PAIR(kPacman));
-    mvwprintw(win_game, 13, i-3, "C          ");
-    wattron(win_game, COLOR_PAIR(kPellet));
-    mvwprintw(win_game, 13, 23, " ");
-    wrefresh(win_game);
-    usleep(100000);
-  }
+  nonl();
+  curs_set(0);
+
+  wclear(win_game);
 }
 
 

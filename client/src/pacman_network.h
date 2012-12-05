@@ -18,6 +18,8 @@ enum { kNoUse = -1 };
 
 void NetworkInitialize();
 void SendMessage(const kPacketType kType, const int value);
+void SendMessage(const kPacketType kType, const char *id_string,
+                 const char *passward_string);
 void NetworkTerminate();
 void HandlingReceivedPacket();
 

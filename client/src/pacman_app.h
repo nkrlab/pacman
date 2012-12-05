@@ -15,6 +15,8 @@
 #include "src/pacman_constants.h"
 
 
+void DoExitProgram(const char *kMessage);
+
 // Attribute Change operation
 void OnChangeGamePoints(const int kGamePoints);
 void OnChangeGhostsInARow(const int kGhostsInARow);
