@@ -7,8 +7,8 @@
 // Some variables that you may want to change
 
 
-#ifndef PACMAN_CLIENT_SRC_PACMAN_APP_H_
-#define PACMAN_CLIENT_SRC_PACMAN_APP_H_
+#ifndef CLIENT_SRC_PACMAN_APP_H_
+#define CLIENT_SRC_PACMAN_APP_H_
 
 #include <string>
 
@@ -30,4 +30,4 @@ void OnChangeCharactersLives(const std::string &kCharactersLives);
 void OnChangeExitMessage(const std::string &kExitMessage);
 
 
-#endif  // PACMAN_CLIENT_SRC_PACMAN_APP_H_
+#endif  // CLIENT_SRC_PACMAN_APP_H_

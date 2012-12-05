@@ -4,8 +4,8 @@
 // must not be used, disclosed, copied, or distributed without the prior
 // consent of Nexon Korea Corporation.
 
-#ifndef PACMAN_SERVER_SRC_PACMAN_GAME_LOGIC_H_
-#define PACMAN_SERVER_SRC_PACMAN_GAME_LOGIC_H_
+#ifndef SERVER_SRC_PACMAN_GAME_LOGIC_H_
+#define SERVER_SRC_PACMAN_GAME_LOGIC_H_
 
 #include "pacman_types.h"
 
@@ -59,4 +59,4 @@ void MovePacman();
 
 }  // namespace pacman
 
-#endif  // PACMAN_SERVER_SRC_PACMAN_GAME_LOGIC_H_
+#endif  // SERVER_SRC_PACMAN_GAME_LOGIC_H_
