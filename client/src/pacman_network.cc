@@ -31,7 +31,7 @@
 
 using boost::asio::ip::tcp;
 
-class GivingTreeProtocolHandler;
+class PacmanProtocolHandler;
 
 namespace {
 
@@ -44,7 +44,7 @@ boost::asio::io_service *io_service;
 tcp::resolver *resolver;
 tcp::resolver::query *query;
 tcp::resolver::iterator *iterator;
-GivingTreeProtocolHandler *handler = NULL;
+PacmanProtocolHandler *handler = NULL;
 boost::thread *boost_thread = NULL;
 
 
@@ -152,9 +152,9 @@ void HandlingReceivedPacket(const std::string &buffer) {
 
 }  // end of anonymous namespace
 
-class GivingTreeProtocolHandler {
+class PacmanProtocolHandler {
  public:
-  GivingTreeProtocolHandler(boost::asio::io_service *io_service,
+  PacmanProtocolHandler(boost::asio::io_service *io_service,
                             tcp::resolver::iterator endpoint_iterator)
     : io_service_(io_service), socket_(*io_service) {
     ConnectStart(endpoint_iterator);
@@ -166,7 +166,7 @@ class GivingTreeProtocolHandler {
   // pass the write data to the do_write function via the io service
   // in the other thread
   void Write(boost::shared_ptr<unsigned char> arg_buffer, int arg_length) {
-    io_service_->post(boost::bind(&GivingTreeProtocolHandler::DoWrite,
+    io_service_->post(boost::bind(&PacmanProtocolHandler::DoWrite,
                                   this, arg_buffer, arg_length));
   }
 
@@ -180,7 +180,7 @@ class GivingTreeProtocolHandler {
 
   // call the do_close function via the io service in the other thread
   void Close() {
-    io_service_->post(boost::bind(&GivingTreeProtocolHandler::DoClose, this));
+    io_service_->post(boost::bind(&PacmanProtocolHandler::DoClose, this));
   }
 
  private:
@@ -189,7 +189,7 @@ class GivingTreeProtocolHandler {
     // call connect_complete when it completes or fails
     tcp::endpoint endpoint = *endpoint_iterator;
     socket_.async_connect(endpoint,
-        boost::bind(&GivingTreeProtocolHandler::ConnectComplete,
+        boost::bind(&PacmanProtocolHandler::ConnectComplete,
                     this,
                     boost::asio::placeholders::error,
                     ++endpoint_iterator));
@@ -213,7 +213,7 @@ class GivingTreeProtocolHandler {
     // Start an asynchronous read and call read_complete when it completes or
     // fails
     socket_.async_read_some(boost::asio::buffer(read_msg_, kMaxReadLength),
-        boost::bind(&GivingTreeProtocolHandler::ReadComplete,
+        boost::bind(&PacmanProtocolHandler::ReadComplete,
                     this,
                     boost::asio::placeholders::error,
                     boost::asio::placeholders::bytes_transferred));
@@ -329,7 +329,7 @@ void NetworkInitialize() {
   iterator = new tcp::resolver::iterator(resolver->resolve(*query));
 
   // define an instance of the main class of this program
-  handler = new GivingTreeProtocolHandler(io_service, *iterator);
+  handler = new PacmanProtocolHandler(io_service, *iterator);
 
   // run the IO service as a separate thread, so the main thread can block
   // on standard input
