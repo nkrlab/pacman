@@ -6,7 +6,8 @@
         "ownership" : "owner",
         "capacity" : 16
       },
-      "persistent" : false
+      "persistent" : false,
+      "channels" : []
     },
     "name" : {
       "data_type" : {
@@ -14,7 +15,8 @@
         "default" : "(no name)",
         "max_length" : 128
       },
-      "persistent" : true
+      "persistent" : true,
+      "channels" : []
     },
     "free_life" : {
       "data_type" : {
@@ -23,7 +25,8 @@
         "min" : 0,
         "max" : 999999
       },
-      "persistent" : false
+      "persistent" : false,
+      "channels" : []
     },
     "remain_lives" : {
       "data_type" : {
@@ -32,7 +35,8 @@
 	"min" : 0,
 	"max" : 999999
       },
-      "persistent" : false
+      "persistent" : false,
+      "channels" : []
     },
     "game_points" : {
       "data_type" : {
@@ -41,7 +45,8 @@
         "min" : 0,
         "max" : 99999
       },
-      "persistent" : false
+      "persistent" : false,
+      "channels" : []
     },
     "locations" : {
       "data_type" : {
@@ -49,7 +54,8 @@
         "default" : "(no name)",
         "max_length" : 10
       },
-      "persistent" : false
+      "persistent" : false,
+      "channels" : []
     },
     "directions" : {
       "data_type" : {
@@ -57,7 +63,8 @@
         "default" : "(no name)",
         "max_length" : 10
       },
-      "persistent" : false
+      "persistent" : false,
+      "channels" : []
     },
     "start_points" : {
       "data_type" : {
@@ -65,7 +72,8 @@
         "default" : "(no name)",
         "max_length" : 10
       },
-      "persistent" : false
+      "persistent" : false,
+      "channels" : []
     },
     "invincible" : {
       "data_type" : {
@@ -74,7 +82,8 @@
         "min" : 0,
         "max" : 1
       },
-      "persistent" : false
+      "persistent" : false,
+      "channels" : []
     },
     "left_pellets" : {
       "data_type" : {
@@ -83,7 +92,8 @@
         "min" : 0,
         "max" : 99999
       },
-      "persistent" : false
+      "persistent" : false,
+      "channels" : []
     },
     "level" : {
       "data_type" : {
@@ -91,7 +101,8 @@
         "default" : "(no name)",
         "max_length" : 812
       },
-      "persistent" : false
+      "persistent" : false,
+      "channels" : []
     },
     "level_number" : {
       "data_type" : {
@@ -100,7 +111,8 @@
         "min" : 0,
         "max" : 9
       },
-      "persistent" : false
+      "persistent" : false,
+      "channels" : []
     },
     "ghosts_in_a_row" : {
       "data_type" : {
@@ -109,7 +121,8 @@
         "min" : 0,
         "max" : 9
       },
-      "persistent" : false
+      "persistent" : false,
+      "channels" : []
     },
     "time_left" : {
       "data_type" : {
@@ -118,7 +131,8 @@
         "min" : 0,
         "max" : 9
       },
-      "persistent" : false
+      "persistent" : false,
+      "channels" : []
     },
     "characters_lives" : {
       "data_type" : {
@@ -126,7 +140,8 @@
         "default" : "(no name)",
         "max_length" : 5
       },
-      "persistent" : false
+      "persistent" : false,
+      "channels" : []
     },
     "exit_message" : {
       "data_type" : {
@@ -134,7 +149,8 @@
         "default" : "(no name)",
         "max_length" : 256
       },
-      "persistent" : false
+      "persistent" : false,
+      "channels" : []
     }
   }
 }

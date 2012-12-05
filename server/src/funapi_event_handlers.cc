@@ -7,7 +7,7 @@
 
 #include <funapi/api/clock.h>
 #include <funapi/object/object.h>
-#include <funapi/object/serialization/bson_archive.h>
+#include <funapi/common/serialization/bson_archive.h>
 #include <funapi/system/logging.h>
 
 #include "funapi_event_handlers.h"
@@ -33,14 +33,14 @@ void OnWorldTick(int64_t /*now_nanosec*/) {
 }
 
 
-fun::object::Object::Ptr CreateObject(const fun::string &model) {
+fun::Object::Ptr CreateObject(const fun::string &model) {
   return Pacman::CreateNew(model);
 }
 
 
-fun::object::Object::Ptr DeserializeObject(const fun::string &serial) {
-  fun::object::serialization::BsonArchive::Ptr archive_ptr =
-      fun::object::serialization::BsonArchive::CreateFromSerialized(serial);
+fun::Object::Ptr DeserializeObject(const fun::string &serial) {
+  fun::BsonArchive::Ptr archive_ptr =
+      fun::BsonArchive::CreateFromSerialized(serial);
   return Pacman::CreateFromSerialized(*archive_ptr);
 }
 

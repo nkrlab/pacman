@@ -9,7 +9,7 @@
 #include <boost/foreach.hpp>
 #include <funapi/api/clock.h>
 #include <funapi/object/object.h>
-#include <funapi/object/serialization/bson_archive.h>
+#include <funapi/common/serialization/bson_archive.h>
 #include <funapi/system/logging.h>
 #include <string>
 

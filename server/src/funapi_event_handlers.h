@@ -33,8 +33,8 @@ namespace pacman {
   void OnWorldTick(int64_t now_nanosec);
 
   // object creators.
-  fun::object::Object::Ptr CreateObject(const fun::string &model);
-  fun::object::Object::Ptr DeserializeObject(const fun::string &serial);
+  fun::Object::Ptr CreateObject(const fun::string &model);
+  fun::Object::Ptr DeserializeObject(const fun::string &serial);
 
   // account event handlers.
   void OnAccountLogin(const fun::Account::Ptr &account);
