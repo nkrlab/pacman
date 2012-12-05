@@ -7,8 +7,8 @@
 // Some variables that you may want to change
 
 
-#ifndef PACMAN_CLIENT_SRC_PACMAN_NETWORK_H_
-#define PACMAN_CLIENT_SRC_PACMAN_NETWORK_H_
+#ifndef CLIENT_SRC_PACMAN_NETWORK_H_
+#define CLIENT_SRC_PACMAN_NETWORK_H_
 
 #include "src/pacman_constants.h"
 
@@ -22,4 +22,4 @@ void NetworkTerminate();
 void HandlingReceivedPacket();
 
 
-#endif  // PACMAN_CLIENT_SRC_PACMAN_NETWORK_H_
+#endif  // CLIENT_SRC_PACMAN_NETWORK_H_

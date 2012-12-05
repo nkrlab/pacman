@@ -7,8 +7,8 @@
 // Some variables that you may want to change
 
 
-#ifndef PACMAN_CLIENT_SRC_PACMAN_RENDER_H_
-#define PACMAN_CLIENT_SRC_PACMAN_RENDER_H_
+#ifndef CLIENT_SRC_PACMAN_RENDER_H_
+#define CLIENT_SRC_PACMAN_RENDER_H_
 
 #include <vector>
 
@@ -43,4 +43,4 @@ void RefreshWindow();
 void DestroyWindows();
 
 
-#endif  // PACMAN_CLIENT_SRC_PACMAN_RENDER_H_
+#endif  // CLIENT_SRC_PACMAN_RENDER_H_
