@@ -149,6 +149,10 @@ void DrawWindow(const int kLives, const int kLevelNumber,
                 const int kTimeLeft,
                 const std::vector<std::vector<int> > &kLocate,
                 const std::vector<std::vector<int> > &kLevel) {
+  if (kLevel.size() < static_cast<size_t>(kLevelWidth))
+    return;
+  if (kLocate.size() < static_cast<size_t>(kChrIndexPacman))
+    return;
   int attr = A_NORMAL;
 
   // Display level array
