@@ -11,6 +11,3 @@ message LoadLevel {
 message PacmanMove {
   optional int32 pacman_direction = 2;
 }
-
-message RequestTick {
-}

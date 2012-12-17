@@ -3,3 +3,44 @@ The following branches (i.e. examples) are available.
 
   stage1-single-play: the most basic one. it's for a single play without a login step.
   stage2-single-with-login: stage1 plus a login step.
+
+===============================================================================
+Introduction
+===============================================================================
+This is an example project that illustrates how to use the Nexon Funapi.
+It consists of a client part and a server part. You need to build both of them
+to test.
+
+
+===============================================================================
+How to compile
+===============================================================================
+Both of client and server can be built using trivial `configure && make'.
+
+$ cd client  (or cd server)
+$ ./boot.sh
+$ mkdir build
+$ cd build
+$ ../configure
+$ make
+
+
+===============================================================================
+How to run
+===============================================================================
+First run the server. After building a server, you can see a file named
+`pacman-launcher'. This is a shell script which pre-loads required libraries
+including Funapi. Simply run the script.
+
+$ cd server/build; ./pacman-launcher
+
+
+Next, run the client.
+
+$ cd client/build; ./pacman
+
+
+You can control Pacman using arrow keys, and Ctrl+C will terminate the client.
+Depending on branch, you may be able to use `q' key to return to the top menu.
+
+Enjoy the game!

@@ -12,7 +12,7 @@
 
 #include "src/pacman_constants.h"
 
-enum kPacketType { kLogin = 1, kLoadLevel, kPacmanMove, kRequestTick, kLogout };
+enum kPacketType { kLogin = 1, kLoadLevel, kPacmanMove, kLogout };
 enum { kNoUse = -1 };
 
 

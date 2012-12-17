@@ -20,6 +20,8 @@
 
 namespace pacman {
 
+enum { kLoadComplete = 1 };
+
 PacmanPtr the_world;
 fun::Account::Ptr the_current_account;
 
@@ -168,6 +170,9 @@ void OnLoadLevel(const PacmanPtr &/*player*/, const ::LoadLevel &msg) {
   // 캐릭터들의 life상태를 저장한다.
   // 이 값은 클라이언트데 자동으로 전송된다.
   the_world->set_characters_lives(str_characters_lives);
+
+  // load complete
+  the_world->set_load_complete(kLoadComplete);
 }
 
 
@@ -243,13 +248,14 @@ void OnPacmanMove(const PacmanPtr &/*player*/, const ::PacmanMove &msg) {
 }
 
 
-void OnRequestTick(const PacmanPtr &/*player*/, const ::RequestTick &/*msg*/) {
-  // 클라이언트에서 요청이 오면
-  // Ghost 들을 이동시킨다.
-  MoveGhosts();
-  // 충돌 체크를 한다.
-  CheckCollision();
+void GameTick() {
+  if (the_world->load_complete()) {
+    // 클라이언트에서 요청이 오면
+    // Ghost 들을 이동시킨다.
+    MoveGhosts();
+    // 충돌 체크를 한다.
+    CheckCollision();
+  }
 }
-
 
 }  // namespace pacman
