@@ -7,7 +7,7 @@
         "capacity" : 16
       },
       "persistent" : false,
-      "channels" : []
+      "channels" : ["room"]
     },
     "name" : {
       "data_type" : {
@@ -16,7 +16,7 @@
         "max_length" : 128
       },
       "persistent" : true,
-      "channels" : []
+      "channels" : ["room"]
     },
     "free_life" : {
       "data_type" : {
@@ -26,7 +26,7 @@
         "max" : 999999
       },
       "persistent" : false,
-      "channels" : []
+      "channels" : ["room"]
     },
     "remain_lives" : {
       "data_type" : {
@@ -36,7 +36,7 @@
 	"max" : 999999
       },
       "persistent" : false,
-      "channels" : []
+      "channels" : ["room"]
     },
     "game_points" : {
       "data_type" : {
@@ -46,7 +46,7 @@
         "max" : 99999
       },
       "persistent" : false,
-      "channels" : []
+      "channels" : ["room"]
     },
     "locations" : {
       "data_type" : {
@@ -55,7 +55,7 @@
         "max_length" : 10
       },
       "persistent" : false,
-      "channels" : []
+      "channels" : ["room"]
     },
     "directions" : {
       "data_type" : {
@@ -64,7 +64,7 @@
         "max_length" : 10
       },
       "persistent" : false,
-      "channels" : []
+      "channels" : ["room"]
     },
     "start_points" : {
       "data_type" : {
@@ -73,7 +73,7 @@
         "max_length" : 10
       },
       "persistent" : false,
-      "channels" : []
+      "channels" : ["room"]
     },
     "invincible" : {
       "data_type" : {
@@ -83,7 +83,7 @@
         "max" : 1
       },
       "persistent" : false,
-      "channels" : []
+      "channels" : ["room"]
     },
     "left_pellets" : {
       "data_type" : {
@@ -93,7 +93,7 @@
         "max" : 99999
       },
       "persistent" : false,
-      "channels" : []
+      "channels" : ["room"]
     },
     "level" : {
       "data_type" : {
@@ -102,7 +102,7 @@
         "max_length" : 812
       },
       "persistent" : false,
-      "channels" : []
+      "channels" : ["room"]
     },
     "level_number" : {
       "data_type" : {
@@ -112,7 +112,7 @@
         "max" : 9
       },
       "persistent" : false,
-      "channels" : []
+      "channels" : ["room"]
     },
     "ghosts_in_a_row" : {
       "data_type" : {
@@ -122,7 +122,7 @@
         "max" : 9
       },
       "persistent" : false,
-      "channels" : []
+      "channels" : ["room"]
     },
     "time_left" : {
       "data_type" : {
@@ -132,7 +132,7 @@
         "max" : 9
       },
       "persistent" : false,
-      "channels" : []
+      "channels" : ["room"]
     },
     "characters_lives" : {
       "data_type" : {
@@ -141,7 +141,7 @@
         "max_length" : 5
       },
       "persistent" : false,
-      "channels" : []
+      "channels" : ["room"]
     },
     "exit_message" : {
       "data_type" : {
@@ -150,7 +150,7 @@
         "max_length" : 256
       },
       "persistent" : false,
-      "channels" : []
+      "channels" : ["room"]
     }
   }
 }
