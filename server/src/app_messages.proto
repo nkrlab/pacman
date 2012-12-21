@@ -13,7 +13,6 @@ message ClientAppMessageType {
   enum Type {
     kLoadLevel = 1001;
     kPacmanMove = 1002;
-    kRequestTick = 1003;
   }
 }
 
@@ -23,7 +22,6 @@ extend ClientAppMessage {
 
   optional LoadLevel load_level = 1001;
   optional PacmanMove pacman_move = 1002;
-  optional RequestTick request_tick = 1003;
 }
 
 
