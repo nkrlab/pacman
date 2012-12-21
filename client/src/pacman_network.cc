@@ -378,15 +378,6 @@ void SendMessage(const kPacketType kType, const int value) {
       move->set_pacman_direction(value);
     }
     break;
-    case kRequestTick: {
-      ca_msg.set_type(ClientAccountMessage::kClientAppMessage);
-
-      // set request tick type
-      ClientAppMessage *msg = ca_msg.mutable_app_message();
-      msg->SetExtension(client_message_type,
-                        ClientAppMessageType::kRequestTick);
-    }
-    break;
   case kLogout: {
     ca_msg.set_type(ClientAccountMessage::kAccountLogoutRequest);
     }
