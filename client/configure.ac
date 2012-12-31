@@ -53,7 +53,6 @@ if test "$ax_cv_boost_thread" != "yes"; then
   AC_MSG_ERROR([Boost thread is required])
 fi
 
-AX_FUNAPI([0.0.1], , AC_MSG_ERROR([FunAPI is required]))
 AX_PTHREAD(, AC_MSG_ERROR([Pthread is required]))
 AX_PROTOBUF
 
