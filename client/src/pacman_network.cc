@@ -24,11 +24,12 @@
 
 #include "src/account_messages.pb.h"
 #include "src/app_messages_for_client.pb.h"
-#include "src/mutex_deque.h"
 #include "src/pacman_app.h"
 #include "src/pacman_constants.h"
 #include "src/pacman_network.h"
 #include "src/pacman_render.h"
+#include "src/util/mutex_deque.h"
+
 
 using boost::asio::ip::tcp;
 
