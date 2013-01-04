@@ -29,5 +29,8 @@ void OnChangeLevel(const std::string &kLevel);
 void OnChangeCharactersLives(const std::string &kCharactersLives);
 void OnChangeExitMessage(const std::string &kExitMessage);
 
+// Receive login response
+void OnReceiveLoginResponse();
+
 
 #endif  // CLIENT_SRC_PACMAN_APP_H_

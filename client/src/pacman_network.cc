@@ -15,6 +15,7 @@
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/bind.hpp>
 #include <boost/thread.hpp>
+#include <boost/thread/thread.hpp>
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/uuid_generators.hpp>
 #include <boost/uuid/uuid_io.hpp>
@@ -149,6 +150,9 @@ void HandlingReceivedPacket(const std::string &buffer) {
         }
       }
     }
+  } else if (account_type == ServerAccountMessage::kAccountLoginResponse) {
+    // notify login response
+    OnReceiveLoginResponse();
   }
 }
 

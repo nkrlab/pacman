@@ -4,6 +4,7 @@
 // must not be used, disclosed, copied, or distributed without the prior
 // consent of Nexon Korea Corporation.
 
+#include <boost/thread/thread.hpp>
 #include <curses.h>
 #include <stdio.h>
 #include <string.h>
@@ -20,14 +21,17 @@
 
 namespace {
 
+// Game Continuous
+enum GameContinuous { kNormal = 0, kWaitLoginResponse,  kLevelEnd };
+
 // How much of a delay is in the game
 const int kSpeedOfGame = 170;
 
 // The lastet inputed key
 int virtualized_key = 0;
 
-// Is Level End
-bool is_level_end = false;
+// Game Continuous variable
+GameContinuous game_continuous = kNormal;
 
 // Temporary stored data from server
 int store_game_points = 0;
@@ -117,7 +121,7 @@ void MainLoop() {
 
   while (true) {
     // check level end
-    if (is_level_end)
+    if (game_continuous != kNormal)
       break;
 
     Delay();
@@ -142,6 +146,22 @@ void MainLoop() {
   usleep(SLEEP_TIME);
 }
 
+
+void WaitLoginResponse() {
+  game_continuous = kWaitLoginResponse;
+  while (true) {
+    // check receive login response
+    if (game_continuous == kNormal)
+      break;
+
+    // packet operate
+    HandlingReceivedPacket();
+
+    // infinite loop sleep
+    boost::this_thread::sleep(boost::posix_time::milliseconds(10));
+  }
+}
+
 }  // End of anonymous namespace
 
 
@@ -162,7 +182,7 @@ void OnChangeLeftPellets(const int kLeftPellets) {
 
 void OnChangeLevelNumber(const int kLevelNumber) {
   if (store_level_number != kLevelNumber) {
-    is_level_end = true;
+    game_continuous = kLevelEnd;
   }
   store_level_number = kLevelNumber;
 }
@@ -250,6 +270,11 @@ void OnChangeExitMessage(const std::string &kExitMessage) {
 }
 
 
+void OnReceiveLoginResponse() {
+  game_continuous = kNormal;
+}
+
+
 int main(int argc, char *argv[100]) {
   srand(time(NULL));
 
@@ -259,6 +284,9 @@ int main(int argc, char *argv[100]) {
   // Network Initialize();
   NetworkInitialize();
   SendMessage(kLogin, kNoUse);
+
+  // wait for login response
+  WaitLoginResponse();
 
   // Show intro "movie"
   IntroScreen();
@@ -282,7 +310,8 @@ int main(int argc, char *argv[100]) {
 
     MainLoop();
 
-    is_level_end = false;
+    if (game_continuous == kLevelEnd)
+      game_continuous = kNormal;
   }
 
   DoExitProgram("Good bye!");
