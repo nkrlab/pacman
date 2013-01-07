@@ -21,9 +21,6 @@ namespace pacman {
 // the one and only world object.
 extern PacmanPtr the_world;
 
-// the current account who sent message.
-extern fun::Account::Ptr the_current_account;
-
 // players methods.
 PacmanPtr FindPlayer(const string &player_name);
 void InsertPlayer(const PacmanPtr &player);
@@ -35,6 +32,9 @@ void OnPacmanMove(const PacmanPtr &player, const ::PacmanMove &msg);
 
 // game tick
 void GameTick();
+
+// send game time
+void SendTimeMessage(int64_t now_nanosec);
 
 }  // namespace pacman
 

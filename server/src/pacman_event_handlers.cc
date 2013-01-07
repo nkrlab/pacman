@@ -11,8 +11,11 @@
 #include <funapi/object/object.h>
 #include <funapi/common/serialization/bson_archive.h>
 #include <funapi/system/logging.h>
+#include <funapi/system/monotonic_clock.h>
+#include <set>
 #include <string>
 
+#include "funapi_event_handlers.h"
 #include "pacman.h"
 #include "pacman_game_logic.h"
 #include "pacman_types.h"
@@ -23,7 +26,6 @@ namespace pacman {
 enum { kLoadComplete = 1 };
 
 PacmanPtr the_world;
-fun::Account::Ptr the_current_account;
 
 
 PacmanPtr FindPlayer(const string &player_name) {
@@ -255,6 +257,23 @@ void GameTick() {
     MoveGhosts();
     // 충돌 체크를 한다.
     CheckCollision();
+  }
+}
+
+
+void SendTimeMessage(int64_t /*now_nanosec*/) {
+  timespec ts;
+  clock_gettime(CLOCK_REALTIME, &ts);
+
+  std::set<fun::Account::Ptr>::iterator it;
+  for (it = live_accounts.begin(); it != live_accounts.end(); ++it) {
+    ServerAppMessage app_msg;
+    app_msg.SetExtension(server_message_type,
+                         ServerAppMessageType::kServerAppTimeMessage);
+    ServerAppTimeMessage *time = app_msg.MutableExtension(timer);
+    time->set_timer(ts.tv_sec);
+
+    (*it)->SendMessage(app_msg);
   }
 }
 

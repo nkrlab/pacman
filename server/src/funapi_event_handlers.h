@@ -13,6 +13,8 @@
 #include <funapi/object/object.h>
 #include <funapi/common/types.h>
 
+#include <set>
+
 #include "app_messages.pb.h"
 
 namespace pacman {
@@ -25,6 +27,9 @@ namespace pacman {
 
   // account object 용 model 의 이름.
   extern const fun::string kAccountObjectModelName;
+
+  // login 중인 accounts
+  extern std::set<fun::Account::Ptr> live_accounts;
 
   // server 가 최초 뜰 때만 불린다.
   void OnWorldReady(int64_t now_nanosec);

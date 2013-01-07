@@ -36,6 +36,9 @@ void ShowGhostDie(const int kXPos, const int kYPos,
 // Show pacman die
 void ShowPacmanDie(const int kXPos, const int kYPos);
 
+// Show server time
+void ShowServerTime(const int hour, const int minute, const int second);
+
 // Refresh ncurses windows
 void RefreshWindow();
 

@@ -1,4 +1,3 @@
-
 // Copyright (C) 2012 Nexon Korea Corporation All Rights Reserved.
 //
 // This work is confidential and proprietary to Nexon Korea Corporation and
@@ -20,6 +19,7 @@ namespace {
 // For ncurses
 WINDOW *win_game;
 WINDOW *win_status;
+WINDOW *win_timer;
 
 // For colors
 enum { kWall = 1, kNormal, kPellet, kPowerUp, kGhostWall,
@@ -114,6 +114,7 @@ void CreateWindows(const int kXStart, const int kYStart,
 
   win_game = newwin(kXStart, kYStart, kXWidth, kYHeight);
   win_status = newwin(3, 27, 29, 1);
+  win_timer = newwin(2, 27, 31, 1);
 }
 
 
@@ -122,6 +123,8 @@ void LoginScreen() {
   wrefresh(win_game);
   wclear(win_status);
   wrefresh(win_status);
+  wclear(win_timer);
+  wrefresh(win_timer);
   wattron(win_game, COLOR_PAIR(kNormal));
 
   curs_set(1);
@@ -252,9 +255,16 @@ void ShowPacmanDie(const int kXPos, const int kYPos) {
 }
 
 
+void ShowServerTime(const int hour, const int minute, const int second) {
+  mvwprintw(win_timer, 1, 1, "%.2dh %.2dm %.2ds", hour, minute, second);
+  wrefresh(win_timer);
+}
+
+
 void RefreshWindow() {
   wrefresh(win_game);
   wrefresh(win_status);
+  wrefresh(win_timer);
 }
 
 

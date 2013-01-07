@@ -148,6 +148,14 @@ void HandlingReceivedPacket(const std::string &buffer) {
         }
       }
     }
+  } else if (account_type == ServerAccountMessage::kServerAppMessage) {
+    const ServerAppMessage &message = sa_msg.app_message();
+    ServerAppMessageType_Type app_type =
+        message.GetExtension(server_message_type);
+    if (app_type == ServerAppMessageType::kServerAppTimeMessage) {
+      const ServerAppTimeMessage &time = message.GetExtension(timer);
+      OnReceiveTime(time.timer());
+    }
   }
 }
 

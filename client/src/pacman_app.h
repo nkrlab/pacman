@@ -17,7 +17,7 @@
 
 void DoExitProgram(const char *kMessage);
 
-// Attribute Change operation
+// Attribute change operation
 void OnChangeGamePoints(const int kGamePoints);
 void OnChangeGhostsInARow(const int kGhostsInARow);
 void OnChangeLeftPellets(const int kLeftPellets);
@@ -30,6 +30,9 @@ void OnChangeLocations(const std::string &kLocations);
 void OnChangeLevel(const std::string &kLevel);
 void OnChangeCharactersLives(const std::string &kCharactersLives);
 void OnChangeExitMessage(const std::string &kExitMessage);
+
+// Receive packet operation
+void OnReceiveTime(const int64_t server_time);
 
 
 #endif  // CLIENT_SRC_PACMAN_APP_H_

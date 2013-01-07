@@ -255,6 +255,13 @@ void OnChangeExitMessage(const std::string &/*kExitMessage*/) {
 }
 
 
+void OnReceiveTime(const int64_t server_time) {
+  tm time;
+  localtime_r(&server_time, &time);
+  ShowServerTime(time.tm_hour, time.tm_min, time.tm_sec);
+}
+
+
 int main(int /*argc*/, char **/*argv*/) {
   srand(time(NULL));
 

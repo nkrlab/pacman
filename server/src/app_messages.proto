@@ -27,7 +27,7 @@ extend ClientAppMessage {
 
 message ServerAppMessageType {
   enum Type {
-    kServerAppDummyMessage = 1001;  // just as a placeholder.
+    kServerAppTimeMessage = 1001;
   }
 }
 
@@ -35,5 +35,5 @@ message ServerAppMessageType {
 extend ServerAppMessage {
   optional ServerAppMessageType.Type server_message_type = 1000;
 
-  optional ServerAppDummyMessage dummy = 1001;
+  optional ServerAppTimeMessage timer = 1001;
 }
