@@ -18,7 +18,7 @@
 
 namespace pacman {
 
-const int64_t kWorldTickMicrosecond = 1000000;  // 1 second.
+const int64_t kWorldTickMicrosecond = 180000;  // 0.18 second.
 const fun::string kWorldObjectModelName("World");
 const fun::string kAccountObjectModelName("Player");
 
@@ -33,8 +33,7 @@ void OnWorldReady(int64_t /*now_nanosec*/) {
 
 
 void OnWorldTick(int64_t /*now_nanosec*/) {
-  // 현재로써는 클라이언트의 요청이 있을때 Tick을 수행하므로 여기서는
-  // 할일이 없다.
+  GameTick();
 }
 
 
@@ -101,9 +100,6 @@ void OnAccountMessage(const fun::Account::Ptr &account,
       break;
     case ::ClientAppMessageType::kPacmanMove:
       OnPacmanMove(player, msg.GetExtension(pacman_move));
-      break;
-    case ::ClientAppMessageType::kRequestTick:
-      OnRequestTick(player);
       break;
     default:
       FUN_LOG_ERR << "Unknown client message type: " << (int64_t)msg_type;

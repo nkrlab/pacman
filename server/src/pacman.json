@@ -190,6 +190,16 @@
       },
       "persistent" : true,
       "channels" : ["room"]
+    },
+    "load_complete" : {
+      "data_type" : {
+        "base" : "integer",
+        "default" : 0,
+        "min" : 0,
+        "max" : 1
+      },
+      "persistent" : false,
+      "channels" : ["room"]
     }
   }
 }

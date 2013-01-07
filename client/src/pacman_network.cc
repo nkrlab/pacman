@@ -298,7 +298,6 @@ void SendMessage(const kPacketType kType, const char *string1,
     break;
   case kLoadLevel:  // handling on other function with different arguments
   case kPacmanMove:
-  case kRequestTick:
   case kLogout:
   case kShowRoomList:
   case kGameEndLeaveRoom:
@@ -357,15 +356,6 @@ void SendMessage(const kPacketType kType, const int value) {
       // set pacman direction name
       PacmanMove *move = msg->MutableExtension(pacman_move);
       move->set_pacman_direction(value);
-    }
-    break;
-    case kRequestTick: {
-      ca_msg.set_type(ClientAccountMessage::kClientAppMessage);
-
-      // set request tick type
-      ClientAppMessage *msg = ca_msg.mutable_app_message();
-      msg->SetExtension(client_message_type,
-                        ClientAppMessageType::kRequestTick);
     }
     break;
     case kLogout: {

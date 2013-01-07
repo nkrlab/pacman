@@ -35,7 +35,7 @@ namespace {
 enum GameContinuous { kNormal = 0, kLevelEnd, kGoLogin, kWaitingRoomList };
 
 // How much of a delay is in the game
-const int kSpeedOfGame = 175;
+const int kSpeedOfGame = 170;
 
 // The lastet inputed key
 int virtualized_key = 0;
@@ -99,8 +99,9 @@ void Delay() {
 
 
 void MainLoop() {
+  const int SLEEP_TIME = 600000;
   RefreshWindow();
-  usleep(100000);
+  usleep(SLEEP_TIME);
 
   while (true) {
     // check level end
@@ -110,16 +111,13 @@ void MainLoop() {
       break;
     }
 
-    // Net Request Server Tick
-    SendMessage(kRequestTick, kNoUse);
-
     Delay();
 
     // Net Packet Operate
     HandlingReceivedPacket();
 
     if (need_sleep) {
-      usleep(1000000);
+      usleep(SLEEP_TIME);
       need_sleep = false;
     }
 
@@ -131,7 +129,7 @@ void MainLoop() {
     SendMessage(kPacmanMove, virtualized_key);
   };
 
-  usleep(100000);
+  usleep(SLEEP_TIME);
 }
 
 

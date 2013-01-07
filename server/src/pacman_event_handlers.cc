@@ -20,7 +20,10 @@
 
 namespace pacman {
 
+
 const fun::string kGameRoomObjectModelName("GameRoom");
+
+enum { kLoadComplete = 1 };
 
 PacmanPtr the_world;
 fun::Account::Ptr the_current_account;
@@ -239,6 +242,9 @@ void OnLoadLevel(const PacmanPtr &player, const ::LoadLevel &msg) {
   player->set_rand_internal(0);
   player->set_slower_ghosts(0);
   player->set_invincible_time(0);
+
+  // load complete
+  player->set_load_complete(kLoadComplete);
 }
 
 
@@ -314,12 +320,24 @@ void OnPacmanMove(const PacmanPtr &player, const ::PacmanMove &msg) {
 }
 
 
-void OnRequestTick(const PacmanPtr &player) {
-  // 클라이언트에서 요청이 오면
-  // Ghost 들을 이동시킨다.
-  MoveGhosts(player);
-  // 충돌 체크를 한다.
-  CheckCollision(player);
+void GameTick() {
+  size_t size = the_world->game_rooms().size();
+  for (size_t i = 0; i < size; ++i) {
+    PacmanPtr game_room = the_world->game_rooms().at(i);
+
+    PacmanPtrMap::const_iterator it;
+    for (it = game_room->players().begin(); it != game_room->players().end();
+         ++it) {
+      PacmanPtr player = Pacman::Cast(it->second);
+      if (player->load_complete()) {
+        // 클라이언트에서 요청이 오면
+        // Ghost 들을 이동시킨다.
+        MoveGhosts(player);
+        // 충돌 체크를 한다.
+        CheckCollision(player);
+      }
+    }
+  }
 }
 
 }  // namespace pacman

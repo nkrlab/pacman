@@ -32,11 +32,13 @@ void ErasePlayer(const string &account_id);
 // account message handlers.
 void OnLoadLevel(const PacmanPtr &player, const ::LoadLevel &msg);
 void OnPacmanMove(const PacmanPtr &player, const ::PacmanMove &msg);
-void OnRequestTick(const PacmanPtr &player);
 void OnShowRoomList();
 void OnMakeRoomGameStart(const PacmanPtr &player,
                          const ::MakeRoomGameStart &msg);
 void OnGameEndLeaveRoom(const PacmanPtr &player);
+
+// game tick
+void GameTick();
 
 }  // namespace pacman
 

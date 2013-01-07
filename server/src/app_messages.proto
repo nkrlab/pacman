@@ -15,10 +15,9 @@ message ClientAppMessageType {
   enum Type {
     kLoadLevel = 1001;
     kPacmanMove = 1002;
-    kRequestTick = 1003;
-    kShowRoomList = 1004;
-    kMakeRoomGameStart = 1005;
-    kGameEndLeaveRoom = 1006;
+    kShowRoomList = 1003;
+    kMakeRoomGameStart = 1004;
+    kGameEndLeaveRoom = 1005;
   }
 }
 
@@ -27,10 +26,9 @@ extend ClientAppMessage {
 
   optional LoadLevel load_level = 1001;
   optional PacmanMove pacman_move = 1002;
-  optional RequestTick request_tick = 1003;
-  optional ShowRoomList show_room_list = 1004;
-  optional MakeRoomGameStart make_room_game_start = 1005;
-  optional GameEndLeaveRoom game_end_reave_room = 1006;
+  optional ShowRoomList show_room_list = 1003;
+  optional MakeRoomGameStart make_room_game_start = 1004;
+  optional GameEndLeaveRoom game_end_reave_room = 1005;
 }
 
 message ServerAppMessageType {

@@ -74,6 +74,9 @@
       },
       "exit_message" : {
         "value" : ""
+      },
+      "load_complete" : {
+        "value" : 0
       }
     }
   }
