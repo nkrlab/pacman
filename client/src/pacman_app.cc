@@ -46,6 +46,9 @@ GameContinuous game_continuous = kNormal;
 // Variable for sleep
 bool need_sleep = false;
 
+// Current level number
+int current_level = 0;
+
 
 void GetInput() {
   static int chtmp = 'a';
@@ -103,11 +106,14 @@ void MainLoop() {
   RefreshWindow();
   usleep(SLEEP_TIME);
 
+  game_continuous = kNormal;
   while (true) {
     // check level end
     if (game_continuous != kNormal) {
-      // request game end and leave room
-      SendMessage(kGameEndLeaveRoom, kNoUse);
+      if (game_continuous == kGoLogin) {
+        // request game end and leave room
+        SendMessage(kGameEndLeaveRoom, kNoUse);
+      }
       break;
     }
 
@@ -162,6 +168,27 @@ void LobbyProcess() {
   MakeRoomScreen();
 }
 
+
+void GameLevelLoop() {
+  for (volatile int i = 1; i < 10; ++i) {
+    // Send Level Number
+    SendMessage(kLoadLevel, i);
+    current_level = i;
+
+    // game main loop
+    MainLoop();
+
+    if (game_continuous == kLevelEnd) {
+      game_continuous = kNormal;
+      // clear all fun object
+      InitializeWorld();
+    } else if (game_continuous == kGoLogin) {
+      SendMessage(kLogout, kNoUse);
+      break;
+    }
+  }
+}
+
 }  // End of anonymous namespace
 
 
@@ -195,6 +222,13 @@ void ReceivedRoomList() {
 }
 
 
+void ReceivedLevelNumber(volatile int level_number) {
+  if (current_level != level_number) {
+    game_continuous = kLevelEnd;
+  }
+}
+
+
 int main(int /*argc*/, char **/*argv*/) {
   srand(time(NULL));
 
@@ -204,34 +238,23 @@ int main(int /*argc*/, char **/*argv*/) {
   // Network Initialize();
   NetworkInitialize();
 
- LOGIN:
-  // Login screen
-  LoginScreen();
+  game_continuous = kGoLogin;
+  // Client loop
+  while (true) {
+    if (game_continuous != kGoLogin)
+      break;
 
-  // clear all fun object
-  InitializeWorld();
+    // Login screen
+    LoginScreen();
 
-  // Lobby process
-  LobbyProcess();
+    // clear all fun object
+    InitializeWorld();
 
-  // Load 9 levels, 1 by 1, if you can beat all 9 levels in a row,
-  // you're awesome
-  for (int i = 1; i < 10; ++i) {
-    // Send Level Number
-    SendMessage(kLoadLevel, i);
+    // Lobby process
+    LobbyProcess();
 
-    // game main loop
-    MainLoop();
-
-    if (game_continuous == kLevelEnd) {
-      game_continuous = kNormal;
-      // clear all fun object
-      InitializeWorld();
-    } else if (game_continuous == kGoLogin) {
-      SendMessage(kLogout, kNoUse);
-      game_continuous = kNormal;
-      goto LOGIN;
-    }
+    // Game level loop
+    GameLevelLoop();
   }
 
   DoExitProgram("Good bye!");

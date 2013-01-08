@@ -255,6 +255,7 @@ void AttributeParseRecursively(const AttributeUpdate &kAttributeMsg) {
   } else if (name.compare("level_number") == 0) {
     int value = GetAttributeInt(kAttributeMsg);
     SetLevelNumber(uuid, value);
+    ReceivedLevelNumber(value);
   } else if (name.compare("remain_lives") == 0) {
     int value = GetAttributeInt(kAttributeMsg);
     SetRemainLives(uuid, value);

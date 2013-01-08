@@ -359,6 +359,7 @@ void MovePacman(const PacmanPtr &player) {
       --left_pellets;
       if (left_pellets <= 0) {
         player->set_level_number(player->level_number() + 1);
+        player->set_load_status(kNotLoaded);
       } else {
         player->set_left_pellets(left_pellets);
       }

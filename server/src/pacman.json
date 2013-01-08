@@ -191,7 +191,7 @@
       "persistent" : true,
       "channels" : ["room"]
     },
-    "load_complete" : {
+    "load_status" : {
       "data_type" : {
         "base" : "integer",
         "default" : 0,

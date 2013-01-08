@@ -21,6 +21,7 @@ void DoExitProgram(const char *kMessage);
 void OnChangeExitMessage(const std::string &exit_message);
 void SetNeedSleep();
 void ReceivedRoomList();
+void ReceivedLevelNumber(int level_number);
 
 
 #endif  // CLIENT_SRC_PACMAN_APP_H_

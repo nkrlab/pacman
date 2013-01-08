@@ -18,6 +18,8 @@
 
 namespace pacman {
 
+enum { kNotLoaded = 0, kLoadComplete = 1 };
+
 // the one and only world object.
 extern PacmanPtr the_world;
 

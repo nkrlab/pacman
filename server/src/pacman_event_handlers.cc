@@ -20,10 +20,7 @@
 
 namespace pacman {
 
-
 const fun::string kGameRoomObjectModelName("GameRoom");
-
-enum { kLoadComplete = 1 };
 
 PacmanPtr the_world;
 fun::Account::Ptr the_current_account;
@@ -116,6 +113,11 @@ void OnGameEndLeaveRoom(const PacmanPtr &player) {
 
 
 void OnLoadLevel(const PacmanPtr &player, const ::LoadLevel &msg) {
+  player->set_load_status(kNotLoaded);
+
+  the_world->set_game_rooms(the_world->game_rooms());
+  the_world->set_players(the_world->players());
+
   const int &level_number = msg.level_number();
 
   // 여러가지 attributes의 초기값들을 지정한다.
@@ -244,11 +246,14 @@ void OnLoadLevel(const PacmanPtr &player, const ::LoadLevel &msg) {
   player->set_invincible_time(0);
 
   // load complete
-  player->set_load_complete(kLoadComplete);
+  player->set_load_status(kLoadComplete);
 }
 
 
 void OnPacmanMove(const PacmanPtr &player, const ::PacmanMove &msg) {
+  if (player->load_status() != kLoadComplete)
+    return;
+
   // 클라이언트에서 받은 메시지에서 팩맨의 가고자 하는 방향값을 추출한다.
   const int &pacman_direction = msg.pacman_direction();
 
@@ -329,7 +334,7 @@ void GameTick() {
     for (it = game_room->players().begin(); it != game_room->players().end();
          ++it) {
       PacmanPtr player = Pacman::Cast(it->second);
-      if (player->load_complete()) {
+      if (player->load_status() == kLoadComplete) {
         // 클라이언트에서 요청이 오면
         // Ghost 들을 이동시킨다.
         MoveGhosts(player);
