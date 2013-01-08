@@ -4,6 +4,7 @@
 // must not be used, disclosed, copied, or distributed without the prior
 // consent of Nexon Korea Corporation.
 
+#include <boost/thread/thread.hpp>
 #include <curses.h>
 #include <stdio.h>
 #include <string.h>
@@ -23,7 +24,7 @@
 namespace {
 
 // Game Continuous
-enum GameContinuous { kNormal = 0, kLevelEnd, kGoLogin };
+enum GameContinuous { kNormal = 0, kWaitLoginResponse, kLevelEnd, kGoLogin };
 
 // How much of a delay is in the game
 const int kSpeedOfGame = 170;
@@ -131,6 +132,22 @@ void MainLoop() {
   };
 
   usleep(SLEEP_TIME);
+}
+
+
+void WaitLoginResponse() {
+  game_continuous = kWaitLoginResponse;
+  while (true) {
+    // check received login response
+    if (game_continuous == kNormal)
+      break;
+
+    // packet operage
+    HandlingReceivedPacket();
+
+    // infinite loop sleep
+    boost::this_thread::sleep(boost::posix_time::milliseconds(10));
+  }
 }
 
 }  // End of anonymous namespace
@@ -262,6 +279,11 @@ void OnReceiveTime(const int64_t server_time) {
 }
 
 
+void OnReceiveLoginResponse() {
+  game_continuous = kNormal;
+}
+
+
 int main(int /*argc*/, char **/*argv*/) {
   srand(time(NULL));
 
@@ -274,6 +296,9 @@ int main(int /*argc*/, char **/*argv*/) {
  LOGIN:
   // Login process
   LoginScreen();
+
+  // wait for login response
+  WaitLoginResponse();
 
   // Load 9 levels, 1 by 1, if you can beat all 9 levels in a row,
   // you're awesome

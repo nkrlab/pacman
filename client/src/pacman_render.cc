@@ -4,8 +4,9 @@
 // must not be used, disclosed, copied, or distributed without the prior
 // consent of Nexon Korea Corporation.
 
-#include <stdlib.h>
+#include <boost/thread/thread.hpp>
 #include <curses.h>
+#include <stdlib.h>
 #include <unistd.h>
 #include <string>
 
@@ -85,15 +86,15 @@ void GetInputString(std::string *str, bool is_id_string) {
         size_t size = str->size();
         if (size >= 1) {
           str->resize(size-1);
+        }
+      } else {
+        if (isprint(ch)) {
+          if (is_id_string)
+           *str += ch;
+          else
+            *str += '*';
+        }
       }
-    } else {
-      if (isprint(ch)) {
-        if (is_id_string)
-         *str += ch;
-        else
-          *str += '*';
-      }
-    }
     }
 
     // between 12~column size clear
@@ -101,6 +102,8 @@ void GetInputString(std::string *str, bool is_id_string) {
     mvwprintw(win_game, y_pos, 12, "%s", str->c_str());
 
     wrefresh(win_game);
+
+    boost::this_thread::sleep(boost::posix_time::milliseconds(10));
   }
 }
 

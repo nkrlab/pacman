@@ -33,6 +33,7 @@ void OnChangeExitMessage(const std::string &kExitMessage);
 
 // Receive packet operation
 void OnReceiveTime(const int64_t server_time);
+void OnReceiveLoginResponse();
 
 
 #endif  // CLIENT_SRC_PACMAN_APP_H_
