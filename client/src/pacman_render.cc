@@ -172,8 +172,8 @@ void LoginScreen() {
 }
 
 
-bool LobbyScreen(std::vector<std::string> kRoomList) {
-  bool make_room = false;
+LobbyExitCode LobbyScreen(std::vector<std::string> kRoomList) {
+  LobbyExitCode exit_code = kShowRooms;
   ScreenStatusPush();
 
   mvwprintw(win_game, 3, 10, "Room List");
@@ -184,10 +184,13 @@ bool LobbyScreen(std::vector<std::string> kRoomList) {
     int ch = getch();
     if (ch != ERR) {
       if ((ch == 'c') || (ch == 'C')) {
-        make_room = true;
+        exit_code = kMakeRoom;
         break;
       } else if ((ch == 'l') || (ch == 'L')) {
-        make_room = false;
+        exit_code = kShowRooms;
+        break;
+      } else if ((ch == 'q') || (ch == 'Q')) {
+        exit_code = kEscapeLobby;
         break;
       }
     }
@@ -199,7 +202,7 @@ bool LobbyScreen(std::vector<std::string> kRoomList) {
   }
 
   ScreenStatusPop();
-  return make_room;
+  return exit_code;
 }
 
 

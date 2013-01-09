@@ -16,6 +16,9 @@
 #include "src/pacman_constants.h"
 
 
+enum LobbyExitCode { kShowRooms = 0, kMakeRoom, kEscapeLobby };
+
+
 // Make ncurses windows
 void CreateWindows(const int kXStart, const int kYStart,
                    const int kXWidth, const int kYHeight);
@@ -25,7 +28,7 @@ void LoginScreen();
 
 // Show lobby room list..
 // Return value means true -> make room, false -> refresh
-bool LobbyScreen(std::vector<std::string> kRoomList);
+LobbyExitCode LobbyScreen(std::vector<std::string> kRoomList);
 
 // Show make room screen
 void MakeRoomScreen();

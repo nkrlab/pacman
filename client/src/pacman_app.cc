@@ -32,7 +32,7 @@
 namespace {
 
 // Game Continuous
-enum GameContinuous { kNormal = 0, kLevelEnd, kGoLogin, kWaitingRoomList };
+enum GameContinuous { kNormal = 0, kLevelEnd, kEscape, kWaitingRoomList };
 
 // How much of a delay is in the game
 const int kSpeedOfGame = 170;
@@ -83,7 +83,7 @@ void GetInput() {
     break;
   case 'q':
   case 'Q':
-    game_continuous = kGoLogin;
+    game_continuous = kEscape;
     break;
   }
 }
@@ -110,7 +110,7 @@ void MainLoop() {
   while (true) {
     // check level end
     if (game_continuous != kNormal) {
-      if (game_continuous == kGoLogin) {
+      if (game_continuous == kEscape) {
         // request game end and leave room
         SendMessage(kGameEndLeaveRoom, kNoUse);
       }
@@ -155,17 +155,22 @@ void LobbyProcessInnerLoop() {
 void LobbyProcess() {
   LobbyProcessInnerLoop();
 
+  LobbyExitCode exit_code = kShowRooms;
   while (true) {
-    bool make_room = LobbyScreen(GetRoomList());
-    if (make_room)
+    exit_code = LobbyScreen(GetRoomList());
+    if (exit_code != kShowRooms)
       break;
 
     SendMessage(kShowRoomList, kNoUse);
     LobbyProcessInnerLoop();
   }
 
-  game_continuous = kNormal;
-  MakeRoomScreen();
+  if (exit_code == kMakeRoom) {
+    game_continuous = kNormal;
+    MakeRoomScreen();
+  } else if (exit_code == kEscapeLobby) {
+    game_continuous = kEscape;
+  }
 }
 
 
@@ -182,8 +187,8 @@ void GameLevelLoop() {
       game_continuous = kNormal;
       // clear all fun object
       InitializeWorld();
-    } else if (game_continuous == kGoLogin) {
-      SendMessage(kLogout, kNoUse);
+    } else if (game_continuous == kEscape) {
+      game_continuous = kNormal;
       break;
     }
   }
@@ -208,7 +213,7 @@ void DoExitProgram(const char *kMessage) {
 
 
 void OnChangeExitMessage(const std::string &/*exit_message*/) {
-  game_continuous = kGoLogin;
+  game_continuous = kEscape;
 }
 
 
@@ -238,10 +243,11 @@ int main(int /*argc*/, char **/*argv*/) {
   // Network Initialize();
   NetworkInitialize();
 
-  game_continuous = kGoLogin;
+  game_continuous = kEscape;
   // Client loop
   while (true) {
-    if (game_continuous != kGoLogin)
+    // check game continuous
+    if (game_continuous != kEscape)
       break;
 
     // Login screen
@@ -250,11 +256,19 @@ int main(int /*argc*/, char **/*argv*/) {
     // clear all fun object
     InitializeWorld();
 
-    // Lobby process
-    LobbyProcess();
+    while (true) {
+      // Lobby process
+      LobbyProcess();
 
-    // Game level loop
-    GameLevelLoop();
+      // check game continuous
+      if (game_continuous == kEscape) {
+        SendMessage(kLogout, kNoUse);
+        break;
+      }
+
+      // Game level loop
+      GameLevelLoop();
+    }
   }
 
   DoExitProgram("Good bye!");
