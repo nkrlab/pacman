@@ -113,7 +113,9 @@ pacman_SOURCES = \
   $(top_srcdir)/src/pacman_game_logic.cc \
   $(top_srcdir)/src/pacman_game_logic.h \
   $(top_srcdir)/src/pacman_server.cc \
-  $(top_srcdir)/src/pacman_types.h
+  $(top_srcdir)/src/pacman_types.h \
+  $(top_srcdir)/src/util/string_convert.cc \
+  $(top_srcdir)/src/util/string_convert.h
 
 # library 를 만들기 위해서 필요한 생성되는 file 들.
 nodist_pacman_SOURCES = \

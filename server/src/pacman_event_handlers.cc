@@ -16,6 +16,7 @@
 #include "pacman_event_handlers.h"
 #include "pacman_game_logic.h"
 #include "pacman_types.h"
+#include "util/string_convert.h"
 
 
 namespace pacman {
@@ -143,7 +144,7 @@ void OnLoadLevel(const PacmanPtr &player, const ::LoadLevel &msg) {
   str_directions += static_cast<char>(kDirStop);
   str_directions += static_cast<char>(kDirBack);
   // 이 값은 클라이언트에 자동으로 전송된다.
-  player->set_directions(str_directions);
+  player->set_directions(Encode(str_directions));
 
   // file open
   char level_file[50] = "../src/resources/level0_.dat";
@@ -216,15 +217,15 @@ void OnLoadLevel(const PacmanPtr &player, const ::LoadLevel &msg) {
 
   // 캐릭터들의 위치정보를 저장한다.
   // 이 값은 클라이언트에 자동으로 전송된다.
-  player->set_locations(str_locations);
+  player->set_locations(Encode(str_locations));
 
   // 레벨(맵 데이터)를 저장한다.
   // 이 값은 클라이언트데 자동으로 전송된다.
-  player->set_level(level_cells);
+  player->set_level(Encode(level_cells));
 
   // 캐릭터들의 시작지점을 저장한다.
   // 이 값은 클라이언트에 자동으로 전송된다.
-  player->set_start_points(str_locations);
+  player->set_start_points(Encode(str_locations));
 
   // 팩맨의 무적 Flag를 초기화 한다.
   // 이 값은 클라이언트에 자동으로 전송된다.
@@ -239,7 +240,7 @@ void OnLoadLevel(const PacmanPtr &player, const ::LoadLevel &msg) {
   str_characters_lives += static_cast<char>(1);
   // 캐릭터들의 life상태를 저장한다.
   // 이 값은 클라이언트데 자동으로 전송된다.
-  player->set_characters_lives(str_characters_lives);
+  player->set_characters_lives(Encode(str_characters_lives));
 
   player->set_rand_internal(0);
   player->set_slower_ghosts(0);
@@ -258,11 +259,11 @@ void OnPacmanMove(const PacmanPtr &player, const ::PacmanMove &msg) {
   const int &pacman_direction = msg.pacman_direction();
 
   // 월드에 저장된 레벨의 cell 값들을 읽어온다.
-  const std::string &level_cells = player->level();
+  const std::string &level_cells = Decode(player->level());
   // 월드에 저장된 캐릭터들의 위치값을 읽어온다.
-  const std::string &locations = player->locations();
+  const std::string &locations = Decode(player->locations());
   // 월드에 저장된 캐릭터들의 방향값을 읽어온다.
-  std::string directions = player->directions();
+  std::string directions = Decode(player->directions());
 
   // 캐릭터들의 위치값들과 방향값들에 적용하기 위해 팩맨의 Index를 구한다.
   int x_index = kChrIndexPacman * 2 + kIndexX;
@@ -316,7 +317,7 @@ void OnPacmanMove(const PacmanPtr &player, const ::PacmanMove &msg) {
 
   // 캐릭터들의 방향값을 저장한다(팩맨의 방향값만 변경되었다)
   // 이 값은 클라이언트데 자동으로 전송된다.
-  player->set_directions(directions);
+  player->set_directions(Encode(directions));
 
   // 방향값에 따라 팩맨을 이동시킨다.
   MovePacman(player);

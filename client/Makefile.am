@@ -44,7 +44,8 @@ pacman_SOURCES = \
   src/pacman_util.cc \
   src/util/boost_util.cc \
   src/util/json_archive.cc \
-  src/util/json_util.cc
+  src/util/json_util.cc \
+  src/util/string_convert.cc
 
 nodist_pacman_SOURCES = \
   src/account_messages.pb.cc \

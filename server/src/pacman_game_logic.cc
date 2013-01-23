@@ -13,6 +13,7 @@
 #include "pacman_event_handlers.h"
 #include "pacman_game_logic.h"
 #include "pacman.h"
+#include "util/string_convert.h"
 
 
 // private members.
@@ -24,9 +25,9 @@ const int kHowSlow = 3;
 
 void CheckCollision(const PacmanPtr &player) {
   // 캐릭터들의 시작 위치를 가져온다.
-  const std::string &start_pos = player->start_points();
+  const std::string &start_pos = Decode(player->start_points());
   // 캐릭터들의 life(살아있는지 죽어있는지)를 얻어온다.
-  std::string str_characters_lives = player->characters_lives();
+  std::string str_characters_lives = Decode(player->characters_lives());
   // 얻어온 life 변수값을 초기화 한다.
   for (int i = 0; i < (kChrIndexPacman+1); ++i) {
     str_characters_lives[i] = static_cast<char>(1);
@@ -34,7 +35,7 @@ void CheckCollision(const PacmanPtr &player) {
 
   for (int i = 0; i < (kChrIndexGhost3+1); ++i) {
     // 캐릭터들의 위치값을 얻어온다.
-    std::string locations = player->locations();
+    std::string locations = Decode(player->locations());
 
     // i번째 Ghost의 X, Y 인덱스
     const int index_x = (i * 2) + kIndexX;
@@ -66,7 +67,7 @@ void CheckCollision(const PacmanPtr &player) {
         locations[index_x] = start_pos[index_x];
         locations[index_y] = start_pos[index_y];
         // 이 값은 클라이언트에 자동으로 전송된다.
-        player->set_locations(locations);
+        player->set_locations(Encode(locations));
       } else {  // 무적상태가 아닌 상태에서 충돌이면 팩맨이 죽은것.
         // 남아있는 life를 차감한다.
         int remain_lives = player->remain_lives();
@@ -93,7 +94,7 @@ void CheckCollision(const PacmanPtr &player) {
         }
         // 캐릭터들의 위치값을 지정한다.
         // 이 값은 자동으로 클라이언트에 전송된다.
-        player->set_locations(locations);
+        player->set_locations(Encode(locations));
 
         // 모든 캐릭터들의 방향값을 초기값으로 만든다.
         std::string directions = "";
@@ -109,20 +110,20 @@ void CheckCollision(const PacmanPtr &player) {
         directions += static_cast<char>(kDirBack);
         // 초기화된 방향값을 지정한다.
         // 이 값은 자동으로 클라이언트에 전송된다.
-        player->set_directions(directions);
+        player->set_directions(Encode(directions));
      }
     }
   }
 
   // 캐릭터 들의 life를 지정한다.
   // 이 값은 클라이언트에 자동으로 전송된다.
-  player->set_characters_lives(str_characters_lives);
+  player->set_characters_lives(Encode(str_characters_lives));
 }
 
 
 void MoveGhosts(const PacmanPtr &player) {
   const int invincible = player->invincible();
-  const std::string &cells = player->level();
+  const std::string &cells = Decode(player->level());
 
   if (invincible) {
     player->set_slower_ghosts(player->slower_ghosts()+1);
@@ -134,8 +135,8 @@ void MoveGhosts(const PacmanPtr &player) {
   if ((!invincible) || player->slower_ghosts() < kHowSlow) {
     // Loop through each ghost
     for (int i = 0; i < (kChrIndexGhost3+1); ++i) {
-      std::string locations = player->locations();
-      std::string directions = player->directions();
+      std::string locations = Decode(player->locations());
+      std::string directions = Decode(player->directions());
 
       int checksides[] = { 0, 0, 0, 0, 0, 0 };
 
@@ -144,22 +145,22 @@ void MoveGhosts(const PacmanPtr &player) {
           (directions[(i * 2) + kIndexX] == -1)) {
         // set location
         locations[(i * 2) + kIndexX] = (kLevelWidth-1);
-        player->set_locations(locations);
+        player->set_locations(Encode(locations));
       } else if ((locations[(i * 2) + kIndexX] == (kLevelWidth-1)) &&
                  (directions[(i * 2) + kIndexX] ==  1)) {
         // set location
         locations[(i * 2) + kIndexX] =  0;
-        player->set_locations(locations);
+        player->set_locations(Encode(locations));
       } else if ((locations[(i * 2) + kIndexY] ==  0) &&
                  (directions[(i * 2) + kIndexY] == -1)) {
         // set location
         locations[(i * 2) + kIndexY] = (kLevelHeight-1);
-        player->set_locations(locations);
+        player->set_locations(Encode(locations));
       } else if ((locations[(i * 2) + kIndexY] == (kLevelHeight-1)) &&
                  (directions[(i * 2) + kIndexY] ==  1)) {
         // set location
         locations[(i * 2) + kIndexY] = 0;
-        player->set_locations(locations);
+        player->set_locations(Encode(locations));
       } else {
         // Determine which directions we can go
         for (int j = 0; j < 4; ++j)
@@ -217,22 +218,22 @@ void MoveGhosts(const PacmanPtr &player) {
               // set directions
               directions[index_x] = kDirFront;
               directions[index_y] = kDirStop;
-              player->set_directions(directions);
+              player->set_directions(Encode(directions));
             } else if (rand_value == 1) {
               // set directions
               directions[index_x] = kDirBack;
               directions[index_y] = kDirStop;
-              player->set_directions(directions);
+              player->set_directions(Encode(directions));
             } else if (rand_value == 2) {
               // set directions
               directions[index_x] = kDirStop;
               directions[index_y] = kDirFront;
-              player->set_directions(directions);
+              player->set_directions(Encode(directions));
             } else if (rand_value == 3) {
               // set directions
               directions[index_x] = kDirStop;
               directions[index_y] = kDirBack;
-              player->set_directions(directions);
+              player->set_directions(Encode(directions));
             }
           } else {
             if (invincible == 1) {
@@ -241,25 +242,25 @@ void MoveGhosts(const PacmanPtr &player) {
                   (checksides[0] == 1)) {
                 directions[index_x] = kDirFront;
                 directions[index_y] = kDirStop;
-                player->set_directions(directions);
+                player->set_directions(Encode(directions));
                 check = 1;
               } else if ((locations[pacman_x] < locations[index_x]) &&
                          (checksides[1] == 1)) {
                 directions[index_x] = kDirBack;
                 directions[index_y] = kDirStop;
-                player->set_directions(directions);
+                player->set_directions(Encode(directions));
                 check = 1;
               } else if ((locations[pacman_y] > locations[index_y]) &&
                          (checksides[2] == 1)) {
                 directions[index_x] = kDirStop;
                 directions[index_y] = kDirFront;
-                player->set_directions(directions);
+                player->set_directions(Encode(directions));
                 check = 1;
               } else if ((locations[pacman_y] < locations[index_y]) &&
                          (checksides[3] == 1)) {
                 directions[index_x] = kDirStop;
                 directions[index_y] = kDirBack;
-                player->set_directions(directions);
+                player->set_directions(Encode(directions));
                 check = 1;
               }
             } else {
@@ -268,25 +269,25 @@ void MoveGhosts(const PacmanPtr &player) {
                   (checksides[1] == 1)) {
                 directions[index_x] = kDirBack;
                 directions[index_y] = kDirStop;
-                player->set_directions(directions);
+                player->set_directions(Encode(directions));
                 check = 1;
               } else if ((locations[pacman_x] < locations[index_x]) &&
                          (checksides[0] == 1)) {
                 directions[index_x] = kDirFront;
                 directions[index_y] = kDirStop;
-                player->set_directions(directions);
+                player->set_directions(Encode(directions));
                 check = 1;
               } else if ((locations[pacman_y] > locations[index_y]) &&
                          (checksides[3] == 1)) {
                 directions[index_x] = kDirStop;
                 directions[index_y] = kDirBack;
-                player->set_directions(directions);
+                player->set_directions(Encode(directions));
                 check = 1;
               } else if ((locations[pacman_y] < locations[index_y]) &&
                          (checksides[2] == 1)) {
                 directions[index_x] = kDirStop;
                 directions[index_y] = kDirFront;
-                player->set_directions(directions);
+                player->set_directions(Encode(directions));
                 check = 1;
               }
             }
@@ -296,7 +297,7 @@ void MoveGhosts(const PacmanPtr &player) {
         // Move Ghost
         locations[index_x] += directions[index_x];
         locations[index_y] += directions[index_y];
-        player->set_locations(locations);
+        player->set_locations(Encode(locations));
       }
     }
   }
@@ -304,9 +305,9 @@ void MoveGhosts(const PacmanPtr &player) {
 
 
 void MovePacman(const PacmanPtr &player) {
-  const std::string &directions = player->directions();
-  std::string locations = player->locations();
-  std::string cells = player->level();
+  const std::string &directions = Decode(player->directions());
+  std::string locations = Decode(player->locations());
+  std::string cells = Decode(player->level());
 
   const int index_x = (kChrIndexPacman * 2) + kIndexX;
   const int index_y = (kChrIndexPacman * 2) + kIndexY;
@@ -315,19 +316,19 @@ void MovePacman(const PacmanPtr &player) {
   if ((locations[index_x] == kLevelStartX) &&
       (directions[index_x] == kDirBack)) {
     locations[index_x] = (kLevelWidth-1);
-    player->set_locations(locations);
+    player->set_locations(Encode(locations));
   } else if ((locations[index_x] == (kLevelWidth-1)) &&
              (directions[index_x] == kDirFront)) {
     locations[index_x] = kLevelStartX;
-    player->set_locations(locations);
+    player->set_locations(Encode(locations));
   } else if ((locations[index_y] == kLevelStartY) &&
              (directions[index_y] == kDirBack)) {
     locations[index_y] = (kLevelHeight-1);
-    player->set_locations(locations);
+    player->set_locations(Encode(locations));
   } else if ((locations[index_y] == (kLevelHeight-1)) &&
              (directions[index_y] == kDirFront)) {
     locations[index_y] = kLevelStartY;
-    player->set_locations(locations);
+    player->set_locations(Encode(locations));
   } else {  // Or
     int pacman_x = locations[index_x] + directions[index_x];
     int pacman_y = locations[index_y] + directions[index_y];
@@ -338,7 +339,7 @@ void MovePacman(const PacmanPtr &player) {
         (cells[index_cell] != kLevelCellGhostWall)) {
       locations[index_x] += directions[index_x];
       locations[index_y] += directions[index_y];
-      player->set_locations(locations);
+      player->set_locations(Encode(locations));
     }
   }
 
@@ -349,7 +350,7 @@ void MovePacman(const PacmanPtr &player) {
   switch (cells[index_cell]) {
     case kLevelCellPellet: {   // Pellet
       cells[index_cell] = 0;
-      player->set_level(cells);
+      player->set_level(Encode(cells));
 
       int game_points = player->game_points();
       ++game_points;
@@ -367,7 +368,7 @@ void MovePacman(const PacmanPtr &player) {
     break;
     case kLevelCellPowerUp: {   // PowerUp
       cells[index_cell] = 0;
-      player->set_level(cells);
+      player->set_level(Encode(cells));
       player->set_invincible(1);
       if (player->ghosts_in_a_row() == 0) {
         player->set_ghosts_in_a_row(1);

@@ -13,6 +13,7 @@
 #include "src/pacman_render.h"
 #include "src/pacman_util.h"
 #include "src/util/json_archive.h"
+#include "src/util/string_convert.h"
 
 
 typedef ::AttributeUpdatesMessage::AttributeUpdateMessage AttributeUpdate;
@@ -183,6 +184,7 @@ void SetCharactersLives(Uuid uuid, std::string value) {
   if (pacman == PacmanPtr())
     return;
   pacman->SetCharactersLives(value);
+  value = Decode(value);
 
   // 나의 player의 message이면
   PacmanPtr player = FindMyPlayer();
@@ -403,7 +405,7 @@ std::vector<std::vector<int> > Locations() {
   if (pacman == PacmanPtr())
     return result;
 
-  std::string locations = pacman->Locations();
+  std::string locations = Decode(pacman->Locations());
   for (int i = 0; i < kChrSize; ++i) {
     std::vector<int> positions;
     for (int j = 0; j < kXYAxis; ++j) {
@@ -423,7 +425,7 @@ std::vector<std::vector<int> > Level() {
   if (pacman == PacmanPtr())
     return result;
 
-  std::string level = pacman->Level();
+  std::string level = Decode(pacman->Level());
   for (int i = 0; i < kLevelWidth; ++i) {
     std::vector<int> column_cell;
     for (int j = 0; j < kLevelHeight; ++j) {
