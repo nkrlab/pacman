@@ -6,7 +6,7 @@
         "ownership" : "owner",
         "capacity" : 8
       },
-      "persistent" : true,
+      "persistent" : false,
       "channels" : ["room"]
     },
     "players" : {
@@ -15,7 +15,7 @@
         "ownership" : "owner",
         "capacity" : 16
       },
-      "persistent" : true,
+      "persistent" : false,
       "channels" : ["room"]
     },
     "name" : {
@@ -24,7 +24,7 @@
         "default" : "(no name)",
         "max_length" : 128
       },
-      "persistent" : true,
+      "persistent" : false,
       "channels" : ["room"]
     },
     "free_life" : {
@@ -34,7 +34,7 @@
         "min" : 0,
         "max" : 999999
       },
-      "persistent" : true,
+      "persistent" : false,
       "channels" : ["room"]
     },
     "remain_lives" : {
@@ -44,7 +44,7 @@
 	"min" : 0,
 	"max" : 999999
       },
-      "persistent" : true,
+      "persistent" : false,
       "channels" : ["room"]
     },
     "game_points" : {
@@ -54,7 +54,7 @@
         "min" : 0,
         "max" : 99999
       },
-      "persistent" : true,
+      "persistent" : false,
       "channels" : ["room"]
     },
     "locations" : {
@@ -63,7 +63,7 @@
         "default" : "(no name)",
         "max_length" : 10
       },
-      "persistent" : true,
+      "persistent" : false,
       "channels" : ["room"]
     },
     "directions" : {
@@ -72,7 +72,7 @@
         "default" : "(no name)",
         "max_length" : 10
       },
-      "persistent" : true,
+      "persistent" : false,
       "channels" : ["room"]
     },
     "start_points" : {
@@ -81,7 +81,7 @@
         "default" : "(no name)",
         "max_length" : 10
       },
-      "persistent" : true,
+      "persistent" : false,
       "channels" : ["room"]
     },
     "invincible" : {
@@ -91,7 +91,7 @@
         "min" : 0,
         "max" : 1
       },
-      "persistent" : true,
+      "persistent" : false,
       "channels" : ["room"]
     },
     "left_pellets" : {
@@ -101,7 +101,7 @@
         "min" : 0,
         "max" : 99999
       },
-      "persistent" : true,
+      "persistent" : false,
       "channels" : ["room"]
     },
     "level" : {
@@ -110,7 +110,7 @@
         "default" : "(no name)",
         "max_length" : 812
       },
-      "persistent" : true,
+      "persistent" : false,
       "channels" : ["room"]
     },
     "level_number" : {
@@ -120,7 +120,7 @@
         "min" : 0,
         "max" : 9
       },
-      "persistent" : true,
+      "persistent" : false,
       "channels" : ["room"]
     },
     "ghosts_in_a_row" : {
@@ -130,7 +130,7 @@
         "min" : 0,
         "max" : 9
       },
-      "persistent" : true,
+      "persistent" : false,
       "channels" : ["room"]
     },
     "time_left" : {
@@ -140,7 +140,7 @@
         "min" : 0,
         "max" : 9
       },
-      "persistent" : true,
+      "persistent" : false,
       "channels" : ["room"]
     },
     "characters_lives" : {
@@ -149,7 +149,7 @@
         "default" : "(no name)",
         "max_length" : 5
       },
-      "persistent" : true,
+      "persistent" : false,
       "channels" : ["room"]
     },
     "rand_internal" : {
@@ -159,7 +159,7 @@
         "min" : -9223372036854775807,
         "max" : 9223372036854775807
       },
-      "persistent" : true,
+      "persistent" : false,
       "channels" : ["room"]
     },
     "slower_ghosts" : {
@@ -169,7 +169,7 @@
         "min" : -9223372036854775807,
         "max" : 9223372036854775807
       },
-      "persistent" : true,
+      "persistent" : false,
       "channels" : ["room"]
     },
     "invincible_time" : {
@@ -179,7 +179,7 @@
         "min" : -9223372036854775807,
         "max" : 9223372036854775807
       },
-      "persistent" : true,
+      "persistent" : false,
       "channels" : ["room"]
     },
     "exit_message" : {
@@ -188,7 +188,7 @@
         "default" : "(no name)",
         "max_length" : 256
       },
-      "persistent" : true,
+      "persistent" : false,
       "channels" : ["room"]
     },
     "load_status" : {
