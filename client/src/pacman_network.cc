@@ -4,12 +4,9 @@
 // must not be used, disclosed, copied, or distributed without the prior
 // consent of Nexon Korea Corporation.
 
-#ifdef POSIX
-#include <termios.h>
-#endif
+#include "src/pacman_network.h"
 
 #include <arpa/inet.h>
-#include <json_spirit.h>
 #include <boost/asio.hpp>
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/classification.hpp>
@@ -18,6 +15,12 @@
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/uuid_generators.hpp>
 #include <boost/uuid/uuid_io.hpp>
+#include <json_spirit.h>
+
+#ifdef POSIX
+#include <termios.h>
+#endif
+
 #include <deque>
 #include <string>
 #include <utility>
@@ -29,7 +32,6 @@
 #include "src/pacman.h"
 #include "src/pacman_app.h"
 #include "src/pacman_constants.h"
-#include "src/pacman_network.h"
 #include "src/pacman_render.h"
 #include "src/pacman_util.h"
 
