@@ -104,7 +104,6 @@ void Delay() {
 
 void MainLoop() {
   const int SLEEP_TIME = 600000;
-  RefreshWindow();
   usleep(SLEEP_TIME);
 
   game_continuous = kNormal;

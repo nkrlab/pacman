@@ -331,12 +331,6 @@ void ShowPacmanDie(const int kXPos, const int kYPos) {
 }
 
 
-void RefreshWindow() {
-  wrefresh(win_game);
-  wrefresh(win_status);
-}
-
-
 void DestroyWindows() {
   endwin();
 }

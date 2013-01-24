@@ -47,9 +47,6 @@ void ShowGhostDie(const int kXPos, const int kYPos,
 // Show pacman die
 void ShowPacmanDie(const int kXPos, const int kYPos);
 
-// Refresh ncurses windows
-void RefreshWindow();
-
 // Destroy ncurses windows
 void DestroyWindows();
 
