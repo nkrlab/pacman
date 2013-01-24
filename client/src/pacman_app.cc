@@ -139,7 +139,7 @@ void MainLoop() {
 }
 
 
-void LobbyProcessInnerLoop() {
+void WaitingForRoomList() {
   game_continuous = kWaitingRoomList;
 
   while (true) {
@@ -153,7 +153,7 @@ void LobbyProcessInnerLoop() {
 
 
 void LobbyProcess() {
-  LobbyProcessInnerLoop();
+  WaitingForRoomList();
 
   LobbyExitCode exit_code = kShowRooms;
   while (true) {
@@ -162,7 +162,7 @@ void LobbyProcess() {
       break;
 
     SendMessage(kShowRoomList, kNoUse);
-    LobbyProcessInnerLoop();
+    WaitingForRoomList();
   }
 
   if (exit_code == kMakeRoom) {
