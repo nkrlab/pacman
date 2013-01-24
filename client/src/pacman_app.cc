@@ -17,6 +17,7 @@
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/bind.hpp>
 #include <boost/thread.hpp>
+#include <boost/thread/thread.hpp>
 #include <curses.h>
 #include <json_spirit.h>
 #include <map>
@@ -133,6 +134,9 @@ void MainLoop() {
 
     // Net Pacman Move
     SendMessage(kPacmanMove, virtualized_key);
+
+    // infinite loop sleep
+    boost::this_thread::sleep(boost::posix_time::milliseconds(10));
   };
 
   usleep(SLEEP_TIME);
@@ -148,6 +152,9 @@ void WaitingForRoomList() {
 
     if (game_continuous == kNormal)
       break;
+
+    // infinite loop sleep
+    boost::this_thread::sleep(boost::posix_time::milliseconds(10));
   }
 }
 
@@ -163,6 +170,9 @@ void LobbyProcess() {
 
     SendMessage(kShowRoomList, kNoUse);
     WaitingForRoomList();
+
+    // infinite loop sleep
+    boost::this_thread::sleep(boost::posix_time::milliseconds(10));
   }
 
   if (exit_code == kMakeRoom) {
@@ -268,7 +278,13 @@ int main(int /*argc*/, char **/*argv*/) {
 
       // Game level loop
       GameLevelLoop();
+
+      // infinite loop sleep
+      boost::this_thread::sleep(boost::posix_time::milliseconds(10));
     }
+
+    // infinite loop sleep
+    boost::this_thread::sleep(boost::posix_time::milliseconds(10));
   }
 
   DoExitProgram("Good bye!");
