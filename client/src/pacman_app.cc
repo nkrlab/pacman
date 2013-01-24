@@ -252,6 +252,9 @@ int main(int /*argc*/, char **/*argv*/) {
   // Network Initialize();
   NetworkInitialize();
 
+  // world object initialize
+  InitializeWorld();
+
   game_continuous = kEscape;
   // Client loop
   while (true) {
@@ -261,9 +264,6 @@ int main(int /*argc*/, char **/*argv*/) {
 
     // Login screen
     LoginScreen();
-
-    // clear all fun object
-    InitializeWorld();
 
     while (true) {
       // Lobby process
