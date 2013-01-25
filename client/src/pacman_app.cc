@@ -50,6 +50,9 @@ bool need_sleep = false;
 // Current level number
 int current_level = 0;
 
+// Login complete or not
+bool login_complete = false;
+
 
 void GetInput() {
   static int chtmp = 'a';
@@ -158,7 +161,23 @@ void WaitingForRoomList() {
 }
 
 
+void WaitForLoginResponse() {
+  while (true) {
+    // check received login response
+    if (login_complete)
+      break;
+
+    // Net Packet Operate
+    HandlingReceivedPacket();
+
+    // infinite loop sleep
+    boost::this_thread::sleep(boost::posix_time::milliseconds(10));
+  }
+}
+
+
 void LobbyProcess() {
+  SendMessage(kShowRoomList, kNoUse);
   WaitingForRoomList();
 
   LobbyExitCode exit_code = kShowRooms;
@@ -243,6 +262,11 @@ void ReceivedLevelNumber(volatile int level_number) {
 }
 
 
+void ReceivedLoginResponse() {
+  login_complete = true;
+}
+
+
 int main(int /*argc*/, char **/*argv*/) {
   srand(time(NULL));
 
@@ -264,6 +288,9 @@ int main(int /*argc*/, char **/*argv*/) {
 
     // Login screen
     LoginScreen();
+
+    // wait for login response
+    WaitForLoginResponse();
 
     while (true) {
       // Lobby process

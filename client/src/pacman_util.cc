@@ -345,6 +345,9 @@ void UpdateFromSerializedBuffer(const std::string &buffer) {
       const AttributeUpdate &kAttributeMsg = updates.attribute_update(i);
       AttributeParseRecursively(kAttributeMsg);
     }
+  } else if (account_type == ServerAccountMessage::kAccountLoginResponse) {
+    // notify login response
+    ReceivedLoginResponse();
   }
 }
 
