@@ -32,6 +32,8 @@ class Pacman {
   Pacman();
   ~Pacman();
 
+  static const PacmanPtr kNull;
+
   static PacmanPtr CreateFromSerialized(const fun::Archive &archive);
 
   Uuid GetUuid() { return uuid_; }

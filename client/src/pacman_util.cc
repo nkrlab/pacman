@@ -19,6 +19,8 @@
 
 typedef ::AttributeUpdatesMessage::AttributeUpdateMessage AttributeUpdate;
 
+const PacmanPtr Pacman::kNull;
+
 
 namespace {
 std::string account_id;
@@ -32,17 +34,17 @@ PacmanPtr FindPacmanObject(PacmanPtr object, const Uuid &uuid) {
   size_t size = object->GameRooms().size();
   for (size_t i = 0; i < size; ++i) {
     PacmanPtr found = FindPacmanObject(object->GameRooms()[i], uuid);
-    if (found != PacmanPtr())
+    if (found != Pacman::kNull)
       return found;
   }
 
   PacmanPtrMap::iterator it;
   for (it = object->Players().begin(); it != object->Players().end(); ++it) {
     PacmanPtr found = FindPacmanObject(it->second, uuid);
-    if (found != PacmanPtr())
+    if (found != Pacman::kNull)
       return found;
   }
-  return PacmanPtr();
+  return Pacman::kNull;
 }
 
 
@@ -56,7 +58,7 @@ PacmanPtr FindMyPlayer() {
         return it->second;
     }
   }
-  return PacmanPtr();
+  return Pacman::kNull;
 }
 
 
@@ -117,7 +119,7 @@ PacmanPtrMap GetAttributePacmanPtrMap(const AttributeUpdate &kAttributeMsg) {
 
 void SetGamePoints(Uuid uuid, int value) {
   PacmanPtr pacman = FindPacmanObject(the_world, uuid);
-  if (pacman == PacmanPtr()) {
+  if (pacman == Pacman::kNull) {
     return;
   }
   pacman->SetGamePoints(value);
@@ -126,7 +128,7 @@ void SetGamePoints(Uuid uuid, int value) {
 
 void SetGhostsInARow(Uuid uuid, int value) {
   PacmanPtr pacman = FindPacmanObject(the_world, uuid);
-  if (pacman == PacmanPtr())
+  if (pacman == Pacman::kNull)
     return;
   pacman->SetGhostsInARow(value);
 }
@@ -134,7 +136,7 @@ void SetGhostsInARow(Uuid uuid, int value) {
 
 void SetInvincible(Uuid uuid, int value) {
   PacmanPtr pacman = FindPacmanObject(the_world, uuid);
-  if (pacman == PacmanPtr())
+  if (pacman == Pacman::kNull)
     return;
   pacman->SetInvincible(value);
 }
@@ -142,7 +144,7 @@ void SetInvincible(Uuid uuid, int value) {
 
 void SetLevelNumber(Uuid uuid, int value) {
   PacmanPtr pacman = FindPacmanObject(the_world, uuid);
-  if (pacman == PacmanPtr())
+  if (pacman == Pacman::kNull)
     return;
   pacman->SetLevelNumber(value);
 }
@@ -150,7 +152,7 @@ void SetLevelNumber(Uuid uuid, int value) {
 
 void SetRemainLives(Uuid uuid, int value) {
   PacmanPtr pacman = FindPacmanObject(the_world, uuid);
-  if (pacman == PacmanPtr())
+  if (pacman == Pacman::kNull)
     return;
   pacman->SetRemainLives(value);
 }
@@ -158,7 +160,7 @@ void SetRemainLives(Uuid uuid, int value) {
 
 void SetTimeLeft(Uuid uuid, int value) {
   PacmanPtr pacman = FindPacmanObject(the_world, uuid);
-  if (pacman == PacmanPtr())
+  if (pacman == Pacman::kNull)
     return;
   pacman->SetTimeLeft(value);
 }
@@ -166,7 +168,7 @@ void SetTimeLeft(Uuid uuid, int value) {
 
 void SetLocations(Uuid uuid, std::string value) {
   PacmanPtr pacman = FindPacmanObject(the_world, uuid);
-  if (pacman == PacmanPtr())
+  if (pacman == Pacman::kNull)
     return;
   pacman->SetLocations(value);
 }
@@ -174,7 +176,7 @@ void SetLocations(Uuid uuid, std::string value) {
 
 void SetLevel(Uuid uuid, std::string value) {
   PacmanPtr pacman = FindPacmanObject(the_world, uuid);
-  if (pacman == PacmanPtr())
+  if (pacman == Pacman::kNull)
     return;
   pacman->SetLevel(value);
 }
@@ -182,14 +184,14 @@ void SetLevel(Uuid uuid, std::string value) {
 
 void SetCharactersLives(Uuid uuid, std::string value) {
   PacmanPtr pacman = FindPacmanObject(the_world, uuid);
-  if (pacman == PacmanPtr())
+  if (pacman == Pacman::kNull)
     return;
   pacman->SetCharactersLives(value);
   value = Decode(value);
 
   // 나의 player의 message이면
   PacmanPtr player = FindMyPlayer();
-  if (player == PacmanPtr())
+  if (player == Pacman::kNull)
     return;
 
   if (pacman->GetUuid() == player->GetUuid()) {
@@ -215,13 +217,13 @@ void SetCharactersLives(Uuid uuid, std::string value) {
 
 void SetExitMessage(Uuid uuid, std::string value) {
   PacmanPtr pacman = FindPacmanObject(the_world, uuid);
-  if (pacman == PacmanPtr())
+  if (pacman == Pacman::kNull)
     return;
   pacman->SetExitMessage(value);
 
   // 나의 player의 message이면
   PacmanPtr player = FindMyPlayer();
-  if (player == PacmanPtr())
+  if (player == Pacman::kNull)
     return;
 
   if (pacman->GetUuid() == player->GetUuid())
@@ -236,7 +238,7 @@ void SetGameRooms(PacmanPtrVector value) {
 
 void SetPlayers(Uuid uuid, PacmanPtrMap value) {
   PacmanPtr pacman = FindPacmanObject(the_world, uuid);
-  if (pacman == PacmanPtr())
+  if (pacman == Pacman::kNull)
     return;
   pacman->SetPlayers(value);
 }
@@ -349,7 +351,7 @@ void UpdateFromSerializedBuffer(const std::string &buffer) {
 
 int GamePoints() {
   PacmanPtr pacman = FindMyPlayer();
-  if (pacman != PacmanPtr())
+  if (pacman != Pacman::kNull)
     return pacman->GamePoints();
   return 0;
 }
@@ -357,7 +359,7 @@ int GamePoints() {
 
 int GhostsInARow() {
   PacmanPtr pacman = FindMyPlayer();
-  if (pacman != PacmanPtr())
+  if (pacman != Pacman::kNull)
     return pacman->GhostsInARow();
   return 0;
 }
@@ -365,7 +367,7 @@ int GhostsInARow() {
 
 bool Invincible() {
   PacmanPtr pacman = FindMyPlayer();
-  if (pacman != PacmanPtr())
+  if (pacman != Pacman::kNull)
     if (pacman->Invincible() == 1)
       return true;
   return false;
@@ -374,7 +376,7 @@ bool Invincible() {
 
 int LevelNumber() {
   PacmanPtr pacman = FindMyPlayer();
-  if (pacman != PacmanPtr())
+  if (pacman != Pacman::kNull)
     return pacman->LevelNumber();
   return 0;
 }
@@ -382,7 +384,7 @@ int LevelNumber() {
 
 int RemainLives() {
   PacmanPtr pacman = FindMyPlayer();
-  if (pacman != PacmanPtr())
+  if (pacman != Pacman::kNull)
     return pacman->RemainLives();
   return 0;
 }
@@ -390,7 +392,7 @@ int RemainLives() {
 
 int TimeLeft() {
   PacmanPtr pacman = FindMyPlayer();
-  if (pacman != PacmanPtr())
+  if (pacman != Pacman::kNull)
     return pacman->TimeLeft();
   return 0;
 }
@@ -400,7 +402,7 @@ std::vector<std::vector<int> > Locations() {
   std::vector<std::vector<int> > result;
 
   PacmanPtr pacman = FindMyPlayer();
-  if (pacman == PacmanPtr())
+  if (pacman == Pacman::kNull)
     return result;
 
   std::string locations = Decode(pacman->Locations());
@@ -420,7 +422,7 @@ std::vector<std::vector<int> > Level() {
   std::vector<std::vector<int> > result;
 
   PacmanPtr pacman = FindMyPlayer();
-  if (pacman == PacmanPtr())
+  if (pacman == Pacman::kNull)
     return result;
 
   std::string level = Decode(pacman->Level());
