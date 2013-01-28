@@ -5,6 +5,7 @@
 // consent of Nexon Korea Corporation.
 
 #include <boost/foreach.hpp>
+#include <boost/format.hpp>
 
 #include "src/account_messages.pb.h"
 #include "src/pacman.h"
@@ -307,20 +308,14 @@ std::vector<std::string> GetRoomList() {
 
     PacmanPtrMap::iterator it;
     for (it = room->Players().begin(); it != room->Players().end(); ++it) {
-      const int kBufferSize = 128;
-      char buffer[kBufferSize];
-      snprintf(buffer, kBufferSize, "%d", index);
+
+      boost::format fmter("%d : %s (%s)");
+      fmter % index;
+      fmter % room->Name();
+      fmter % it->second->Name();
       ++index;
 
-      std::string room_name;
-      room_name = buffer;
-      room_name += " :  ";
-      room_name += room->Name();
-      room_name += " (";
-      room_name += it->second->Name();
-      room_name += ")";
-
-      result.push_back(room_name);
+      result.push_back(fmter.str());
     }
   }
   return result;
