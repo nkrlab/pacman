@@ -12,15 +12,15 @@
 
 #include "src/pacman_constants.h"
 
-enum kPacketType { kLogin = 1, kLoadLevel, kPacmanMove, kLogout,
-                   kShowRoomList, kMakeRoomGameStart, kGameEndLeaveRoom };
-enum { kNoUse = -1 };
-
 
 void NetworkInitialize();
-void SendMessage(const kPacketType kType, const int value);
-void SendMessage(const kPacketType kType, const char *string1,
-                 const char *string2);
+void SendMessageLogin(const char *account_id);
+void SendMessageLoadLevel(const int level_number);
+void SendMessagePacmanMove(const int virtual_key);
+void SendMessageLogout();
+void SendMessageShowRoomList();
+void SendMessageMakeRoomGameStart(const char *room_name);
+void SendMessageGameEndLeaveRoom();
 void NetworkTerminate();
 void HandlingReceivedPacket();
 

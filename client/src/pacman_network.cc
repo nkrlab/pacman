@@ -271,40 +271,14 @@ void NetworkInitialize() {
 }
 
 
-void SendMessage(const kPacketType kType, const char *string1,
-                 const char */*string2*/) {
+void SendMessageLogin(const char *account_id) {
   // set account message type
   ClientAccountMessage ca_msg;
-  switch (kType) {
-    case kLogin: {
-      ca_msg.set_type(ClientAccountMessage::kAccountLoginRequest);
+  ca_msg.set_type(ClientAccountMessage::kAccountLoginRequest);
 
-      // account
-      AccountLoginRequest *login = ca_msg.mutable_login();
-      login->set_account_id(string1);
-    }
-    break;
-  case kMakeRoomGameStart: {
-      ca_msg.set_type(ClientAccountMessage::kClientAppMessage);
-
-      // set make room game start type
-      ClientAppMessage *msg = ca_msg.mutable_app_message();
-      msg->SetExtension(client_message_type,
-                        ClientAppMessageType::kMakeRoomGameStart);
-
-      // set level number
-      MakeRoomGameStart *room = msg->MutableExtension(make_room_game_start);
-      room->set_name(string1);
-    }
-    break;
-  case kLoadLevel:  // handling on other function with different arguments
-  case kPacmanMove:
-  case kLogout:
-  case kShowRoomList:
-  case kGameEndLeaveRoom:
-    assert(false);
-  break;
-  }
+  // account
+  AccountLoginRequest *login = ca_msg.mutable_login();
+  login->set_account_id(account_id);
 
   // send
   std::string data;
@@ -316,63 +290,123 @@ void SendMessage(const kPacketType kType, const char *string1,
 }
 
 
-void SendMessage(const kPacketType kType, const int value) {
+void SendMessageLoadLevel(const int level_number) {
   // set account message type
   ClientAccountMessage ca_msg;
-  switch (kType) {
-    case kLogin:  // handling on other function with different arguments
-    case kMakeRoomGameStart:
-      assert(false);
-    break;
-    case kGameEndLeaveRoom: {
-      ca_msg.set_type(ClientAccountMessage::kClientAppMessage);
+  ca_msg.set_type(ClientAccountMessage::kClientAppMessage);
 
-      // set request tick type
-      ClientAppMessage *msg = ca_msg.mutable_app_message();
-      msg->SetExtension(client_message_type,
-                        ClientAppMessageType::kGameEndLeaveRoom);
-    }
-    break;
-    case kLoadLevel: {
-      ca_msg.set_type(ClientAccountMessage::kClientAppMessage);
+  // set load level type
+  ClientAppMessage *msg = ca_msg.mutable_app_message();
+  msg->SetExtension(client_message_type,
+                    ClientAppMessageType::kLoadLevel);
 
-      // set load level type
-      ClientAppMessage *msg = ca_msg.mutable_app_message();
-      msg->SetExtension(client_message_type,
-                        ClientAppMessageType::kLoadLevel);
+  // set level number
+  LoadLevel *level = msg->MutableExtension(load_level);
+  level->set_level_number(level_number);
 
-      // set level number
-      LoadLevel *level = msg->MutableExtension(load_level);
-      level->set_level_number(value);
-    }
-    break;
-    case kPacmanMove: {
-      ca_msg.set_type(ClientAccountMessage::kClientAppMessage);
+  // send
+  std::string data;
+  boost::shared_ptr<unsigned char> buffer;
+  int buffer_size;
+  ca_msg.SerializeToString(&data);
+  PackStringToBuffer(data, &buffer, &buffer_size);
+  handler->Write(buffer, buffer_size);
+}
 
-      // set pacman move type
-      ClientAppMessage *msg = ca_msg.mutable_app_message();
-      msg->SetExtension(client_message_type,
-                        ClientAppMessageType::kPacmanMove);
 
-      // set pacman direction name
-      PacmanMove *move = msg->MutableExtension(pacman_move);
-      move->set_pacman_direction(value);
-    }
-    break;
-    case kLogout: {
-      ca_msg.set_type(ClientAccountMessage::kAccountLogoutRequest);
-    }
-    break;
-    case kShowRoomList: {
-      ca_msg.set_type(ClientAccountMessage::kClientAppMessage);
+void SendMessagePacmanMove(const int virtual_key) {
+  // set account message type
+  ClientAccountMessage ca_msg;
+  ca_msg.set_type(ClientAccountMessage::kClientAppMessage);
 
-      // set request tick type
-      ClientAppMessage *msg = ca_msg.mutable_app_message();
-      msg->SetExtension(client_message_type,
-                        ClientAppMessageType::kShowRoomList);
-    }
-    break;
-  }
+  // set pacman move type
+  ClientAppMessage *msg = ca_msg.mutable_app_message();
+  msg->SetExtension(client_message_type,
+                    ClientAppMessageType::kPacmanMove);
+
+  // set pacman direction name
+  PacmanMove *move = msg->MutableExtension(pacman_move);
+  move->set_pacman_direction(virtual_key);
+
+  // send
+  std::string data;
+  boost::shared_ptr<unsigned char> buffer;
+  int buffer_size;
+  ca_msg.SerializeToString(&data);
+  PackStringToBuffer(data, &buffer, &buffer_size);
+  handler->Write(buffer, buffer_size);
+}
+
+
+void SendMessageLogout() {
+  // set account message type
+  ClientAccountMessage ca_msg;
+  ca_msg.set_type(ClientAccountMessage::kAccountLogoutRequest);
+
+  // send
+  std::string data;
+  boost::shared_ptr<unsigned char> buffer;
+  int buffer_size;
+  ca_msg.SerializeToString(&data);
+  PackStringToBuffer(data, &buffer, &buffer_size);
+  handler->Write(buffer, buffer_size);
+}
+
+
+void SendMessageShowRoomList() {
+  // set account message type
+  ClientAccountMessage ca_msg;
+  ca_msg.set_type(ClientAccountMessage::kClientAppMessage);
+
+  // set show room list type
+  ClientAppMessage *msg = ca_msg.mutable_app_message();
+  msg->SetExtension(client_message_type,
+                    ClientAppMessageType::kShowRoomList);
+
+  // send
+  std::string data;
+  boost::shared_ptr<unsigned char> buffer;
+  int buffer_size;
+  ca_msg.SerializeToString(&data);
+  PackStringToBuffer(data, &buffer, &buffer_size);
+  handler->Write(buffer, buffer_size);
+}
+
+
+void SendMessageMakeRoomGameStart(const char *room_name) {
+  // set account message type
+  ClientAccountMessage ca_msg;
+  ca_msg.set_type(ClientAccountMessage::kClientAppMessage);
+
+  // set make room game start type
+  ClientAppMessage *msg = ca_msg.mutable_app_message();
+  msg->SetExtension(client_message_type,
+                     ClientAppMessageType::kMakeRoomGameStart);
+
+  // set make room game start type
+  MakeRoomGameStart *room = msg->MutableExtension(make_room_game_start);
+  // set room name
+  room->set_name(room_name);
+
+  // send
+  std::string data;
+  boost::shared_ptr<unsigned char> buffer;
+  int buffer_size;
+  ca_msg.SerializeToString(&data);
+  PackStringToBuffer(data, &buffer, &buffer_size);
+  handler->Write(buffer, buffer_size);
+}
+
+
+void SendMessageGameEndLeaveRoom() {
+  // set account message type
+  ClientAccountMessage ca_msg;
+  ca_msg.set_type(ClientAccountMessage::kClientAppMessage);
+
+  // set request game end leave room type
+  ClientAppMessage *msg = ca_msg.mutable_app_message();
+  msg->SetExtension(client_message_type,
+                    ClientAppMessageType::kGameEndLeaveRoom);
 
   // send
   std::string data;

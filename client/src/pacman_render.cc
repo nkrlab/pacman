@@ -168,7 +168,7 @@ void LoginScreen() {
   curs_set(0);
 
   SetAccountId(id_string);
-  SendMessage(kLogin, id_string.c_str(), passward_string.c_str());
+  SendMessageLogin(id_string.c_str());
 }
 
 
@@ -216,7 +216,7 @@ void MakeRoomScreen() {
   std::string room_name_string;
   GetInputString(&room_name_string, kRoomName);
 
-  SendMessage(kMakeRoomGameStart, room_name_string.c_str(), NULL);
+  SendMessageMakeRoomGameStart(room_name_string.c_str());
 
   ScreenStatusPop();
   curs_set(0);

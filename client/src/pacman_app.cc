@@ -116,7 +116,7 @@ void MainLoop() {
     if (game_continuous != kNormal) {
       if (game_continuous == kEscape) {
         // request game end and leave room
-        SendMessage(kGameEndLeaveRoom, kNoUse);
+        SendMessageGameEndLeaveRoom();
       }
       break;
     }
@@ -136,7 +136,7 @@ void MainLoop() {
                TimeLeft(), Locations(), Level());
 
     // Net Pacman Move
-    SendMessage(kPacmanMove, virtualized_key);
+    SendMessagePacmanMove(virtualized_key);
 
     // infinite loop sleep
     boost::this_thread::sleep(boost::posix_time::milliseconds(10));
@@ -148,7 +148,7 @@ void MainLoop() {
 
 void WaitingForRoomList() {
   game_continuous = kWaitingRoomList;
-  SendMessage(kShowRoomList, kNoUse);
+  SendMessageShowRoomList();
 
   while (true) {
     // Net Packet Operate
@@ -179,7 +179,7 @@ void WaitForLoginResponse() {
 
 
 void LobbyProcess() {
-  SendMessage(kShowRoomList, kNoUse);
+  SendMessageShowRoomList();
   WaitingForRoomList();
 
   LobbyExitCode exit_code = kShowRooms;
@@ -188,7 +188,7 @@ void LobbyProcess() {
     if (exit_code != kShowRooms)
       break;
 
-    SendMessage(kShowRoomList, kNoUse);
+    SendMessageShowRoomList();
     WaitingForRoomList();
 
     // infinite loop sleep
@@ -207,7 +207,7 @@ void LobbyProcess() {
 void GameLevelLoop() {
   for (volatile int i = 1; i < 10; ++i) {
     // Send Level Number
-    SendMessage(kLoadLevel, i);
+    SendMessageLoadLevel(i);
     current_level = i;
 
     // game main loop
@@ -229,7 +229,7 @@ void GameLevelLoop() {
 
 void DoExitProgram(const char *kMessage) {
   // send log out message
-  SendMessage(kLogout, kNoUse);
+  SendMessageLogout();
 
   // terminate network
   NetworkTerminate();
@@ -303,7 +303,7 @@ int main(int /*argc*/, char **/*argv*/) {
 
       // check game continuous
       if (game_continuous == kEscape) {
-        SendMessage(kLogout, kNoUse);
+        SendMessageLogout();
         break;
       }
 
