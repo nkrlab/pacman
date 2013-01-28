@@ -62,6 +62,45 @@ PacmanPtr FindMyPlayer() {
 }
 
 
+PacmanPtr FindMyRoom() {
+  size_t size = the_world->GameRooms().size();
+  for (size_t i = 0; i < size; ++i) {
+    PacmanPtr room = the_world->GameRooms()[i];
+    PacmanPtrMap::iterator it;
+    for (it = room->Players().begin(); it != room->Players().end(); ++it) {
+      if (it->first.compare(account_id) == 0)
+        return room;
+    }
+  }
+  return Pacman::kNull;
+}
+
+
+PacmanPtr FindOtherPlayer() {
+  PacmanPtr room = FindMyRoom();
+  if (not room)
+    return Pacman::kNull;
+
+  PacmanPtrMap::iterator it;
+  for (it = room->Players().begin(); it != room->Players().end(); ++it) {
+    if (it->first.compare(account_id) != 0)
+      return it->second;
+  }
+  return Pacman::kNull;
+}
+
+
+bool IsPlayerLive(bool is_my_player) {
+  PacmanPtr pacman = (is_my_player) ? FindMyPlayer() : FindOtherPlayer();
+  if (not pacman)
+    return false;
+
+  if (pacman->RemainLives() > -1)
+    return true;
+  return false;
+}
+
+
 Uuid GetPacmanUuid(const AttributeUpdate &kAttributeMsg) {
   const ::std::string& uuid_string = kAttributeMsg.object_uuid();
   Uuid uuid;
@@ -119,7 +158,7 @@ PacmanPtrMap GetAttributePacmanPtrMap(const AttributeUpdate &kAttributeMsg) {
 
 void SetGamePoints(Uuid uuid, int value) {
   PacmanPtr pacman = FindPacmanObject(the_world, uuid);
-  if (pacman == Pacman::kNull) {
+  if (not pacman) {
     return;
   }
   pacman->SetGamePoints(value);
@@ -128,7 +167,7 @@ void SetGamePoints(Uuid uuid, int value) {
 
 void SetGhostsInARow(Uuid uuid, int value) {
   PacmanPtr pacman = FindPacmanObject(the_world, uuid);
-  if (pacman == Pacman::kNull)
+  if (not pacman)
     return;
   pacman->SetGhostsInARow(value);
 }
@@ -136,7 +175,7 @@ void SetGhostsInARow(Uuid uuid, int value) {
 
 void SetInvincible(Uuid uuid, int value) {
   PacmanPtr pacman = FindPacmanObject(the_world, uuid);
-  if (pacman == Pacman::kNull)
+  if (not pacman)
     return;
   pacman->SetInvincible(value);
 }
@@ -144,7 +183,7 @@ void SetInvincible(Uuid uuid, int value) {
 
 void SetLevelNumber(Uuid uuid, int value) {
   PacmanPtr pacman = FindPacmanObject(the_world, uuid);
-  if (pacman == Pacman::kNull)
+  if (not pacman)
     return;
   pacman->SetLevelNumber(value);
 }
@@ -152,7 +191,7 @@ void SetLevelNumber(Uuid uuid, int value) {
 
 void SetRemainLives(Uuid uuid, int value) {
   PacmanPtr pacman = FindPacmanObject(the_world, uuid);
-  if (pacman == Pacman::kNull)
+  if (not pacman)
     return;
   pacman->SetRemainLives(value);
 }
@@ -160,7 +199,7 @@ void SetRemainLives(Uuid uuid, int value) {
 
 void SetTimeLeft(Uuid uuid, int value) {
   PacmanPtr pacman = FindPacmanObject(the_world, uuid);
-  if (pacman == Pacman::kNull)
+  if (not pacman)
     return;
   pacman->SetTimeLeft(value);
 }
@@ -168,7 +207,7 @@ void SetTimeLeft(Uuid uuid, int value) {
 
 void SetLocations(Uuid uuid, std::string value) {
   PacmanPtr pacman = FindPacmanObject(the_world, uuid);
-  if (pacman == Pacman::kNull)
+  if (not pacman)
     return;
   pacman->SetLocations(value);
 }
@@ -176,7 +215,7 @@ void SetLocations(Uuid uuid, std::string value) {
 
 void SetLevel(Uuid uuid, std::string value) {
   PacmanPtr pacman = FindPacmanObject(the_world, uuid);
-  if (pacman == Pacman::kNull)
+  if (not pacman)
     return;
   pacman->SetLevel(value);
 }
@@ -184,29 +223,38 @@ void SetLevel(Uuid uuid, std::string value) {
 
 void SetCharactersLives(Uuid uuid, std::string value) {
   PacmanPtr pacman = FindPacmanObject(the_world, uuid);
-  if (pacman == Pacman::kNull)
+  if (not pacman)
     return;
   pacman->SetCharactersLives(value);
   value = Decode(value);
 
-  // 나의 player의 message이면
+  bool is_my_player = false;
   PacmanPtr player = FindMyPlayer();
-  if (player == Pacman::kNull)
-    return;
+  if (player) {
+    is_my_player = true;
+  } else {
+    player = FindOtherPlayer();
+    if (player) {
+      is_my_player = false;
+    } else {
+      return;
+    }
+  }
 
   if (pacman->GetUuid() == player->GetUuid()) {
     // 직접 render의 함수를 call
-    std::vector<std::vector<int> > locations = Locations();
-    int ghosts_in_a_row = GhostsInARow();
+    std::vector<std::vector<int> > locations = Locations(true);
+    int ghosts_in_a_row = GhostsInARow(true);
 
     for (size_t i = 0; i < value.size(); ++i) {
       int data = static_cast<int>(value[i]);
       if (data == 0) {
         if (i < kChrIndexPacman) {
           ShowGhostDie(locations[i][kIndexX], locations[i][kIndexY],
-                       ghosts_in_a_row/2);
+                       ghosts_in_a_row/2, is_my_player);
         } else {
-          ShowPacmanDie(locations[i][kIndexX], locations[i][kIndexY]);
+          ShowPacmanDie(locations[i][kIndexX], locations[i][kIndexY],
+                        is_my_player);
         }
         SetNeedSleep();
       }
@@ -217,13 +265,13 @@ void SetCharactersLives(Uuid uuid, std::string value) {
 
 void SetExitMessage(Uuid uuid, std::string value) {
   PacmanPtr pacman = FindPacmanObject(the_world, uuid);
-  if (pacman == Pacman::kNull)
+  if (not pacman)
     return;
   pacman->SetExitMessage(value);
 
   // 나의 player의 message이면
   PacmanPtr player = FindMyPlayer();
-  if (player == Pacman::kNull)
+  if (not player)
     return;
 
   if (pacman->GetUuid() == player->GetUuid())
@@ -238,9 +286,17 @@ void SetGameRooms(PacmanPtrVector value) {
 
 void SetPlayers(Uuid uuid, PacmanPtrMap value) {
   PacmanPtr pacman = FindPacmanObject(the_world, uuid);
-  if (pacman == Pacman::kNull)
+  if (not pacman)
     return;
   pacman->SetPlayers(value);
+
+  // 나의 room의 message이면
+  PacmanPtr room = FindMyRoom();
+  if (pacman != room)
+    return;
+
+  if (room->Players().size() > 1)
+    ReceivedOtherPlayerJoin();
 }
 
 
@@ -301,25 +357,30 @@ void SetAccountId(const std::string &name) {
 }
 
 
-std::vector<std::string> GetRoomList() {
-  std::vector<std::string> result;
+std::vector<RoomInfo> GetRoomList() {
+  std::vector<RoomInfo> result;
   size_t size = the_world->GameRooms().size();
-  int index = 1;
+
   for (size_t i = 0; i < size; ++i) {
     PacmanPtr room = the_world->GameRooms()[i];
 
-    PacmanPtrMap::iterator it;
-    for (it = room->Players().begin(); it != room->Players().end(); ++it) {
+    boost::format fmter("%d : %s");
+    fmter % i;
+    fmter % room->Name();
 
-      boost::format fmter("%d : %s (%s)");
-      fmter % index;
-      fmter % room->Name();
-      fmter % it->second->Name();
-      ++index;
+    RoomInfo room_info;
+    room_info.room_name_ = fmter.str();
 
-      result.push_back(fmter.str());
+    if (room->Duel() == kDuel) {
+      room_info.room_name_ += " (Duel)";
+      room_info.duel_ = kDuel;
+    } else {
+      room_info.duel_ = kSingle;
     }
+
+    result.push_back(room_info);
   }
+
   return result;
 }
 
@@ -349,60 +410,61 @@ void UpdateFromSerializedBuffer(const std::string &buffer) {
 }
 
 
-int GamePoints() {
-  PacmanPtr pacman = FindMyPlayer();
-  if (pacman != Pacman::kNull)
+int GamePoints(bool is_my_player) {
+  PacmanPtr pacman = (is_my_player) ? FindMyPlayer() : FindOtherPlayer();
+  if (pacman)
     return pacman->GamePoints();
   return 0;
 }
 
 
-int GhostsInARow() {
-  PacmanPtr pacman = FindMyPlayer();
-  if (pacman != Pacman::kNull)
+int GhostsInARow(bool is_my_player) {
+  PacmanPtr pacman = (is_my_player) ? FindMyPlayer() : FindOtherPlayer();
+  if (pacman)
     return pacman->GhostsInARow();
   return 0;
 }
 
 
-bool Invincible() {
-  PacmanPtr pacman = FindMyPlayer();
-  if (pacman != Pacman::kNull)
+bool Invincible(bool is_my_player) {
+  PacmanPtr pacman = (is_my_player) ? FindMyPlayer() : FindOtherPlayer();
+  if (pacman) {
     if (pacman->Invincible() == 1)
       return true;
+  }
   return false;
 }
 
 
-int LevelNumber() {
-  PacmanPtr pacman = FindMyPlayer();
-  if (pacman != Pacman::kNull)
+int LevelNumber(bool is_my_player) {
+  PacmanPtr pacman = (is_my_player) ? FindMyPlayer() : FindOtherPlayer();
+  if (pacman)
     return pacman->LevelNumber();
   return 0;
 }
 
 
-int RemainLives() {
-  PacmanPtr pacman = FindMyPlayer();
-  if (pacman != Pacman::kNull)
+int RemainLives(bool is_my_player) {
+  PacmanPtr pacman = (is_my_player) ? FindMyPlayer() : FindOtherPlayer();
+  if (pacman)
     return pacman->RemainLives();
   return 0;
 }
 
 
-int TimeLeft() {
-  PacmanPtr pacman = FindMyPlayer();
-  if (pacman != Pacman::kNull)
+int TimeLeft(bool is_my_player) {
+  PacmanPtr pacman = (is_my_player) ? FindMyPlayer() : FindOtherPlayer();
+  if (pacman)
     return pacman->TimeLeft();
   return 0;
 }
 
 
-std::vector<std::vector<int> > Locations() {
+std::vector<std::vector<int> > Locations(bool is_my_player) {
   std::vector<std::vector<int> > result;
 
-  PacmanPtr pacman = FindMyPlayer();
-  if (pacman == Pacman::kNull)
+  PacmanPtr pacman = (is_my_player) ? FindMyPlayer() : FindOtherPlayer();
+  if (not pacman)
     return result;
 
   std::string locations = Decode(pacman->Locations());
@@ -418,11 +480,11 @@ std::vector<std::vector<int> > Locations() {
 }
 
 
-std::vector<std::vector<int> > Level() {
+std::vector<std::vector<int> > Level(bool is_my_player) {
   std::vector<std::vector<int> > result;
 
-  PacmanPtr pacman = FindMyPlayer();
-  if (pacman == Pacman::kNull)
+  PacmanPtr pacman = (is_my_player) ? FindMyPlayer() : FindOtherPlayer();
+  if (not pacman)
     return result;
 
   std::string level = Decode(pacman->Level());
@@ -438,4 +500,53 @@ std::vector<std::vector<int> > Level() {
 }
 
 
+bool IsValidRoomNumber(int room_number) {
+  if (room_number < 0)
+    return false;
 
+  size_t index = static_cast<size_t>(room_number);
+  size_t size = the_world->GameRooms().size();
+  if (index >= size)
+    return false;
+
+  PacmanPtr pacman = the_world->GameRooms().at(room_number);
+  if (not pacman)
+    return false;
+
+  if (not pacman->Duel())
+    return false;
+
+  if (pacman->Players().size() > 1)
+    return false;
+
+  return true;
+}
+
+
+bool HasOtherPlayer() {
+  bool bRet = false;
+  if (FindOtherPlayer())
+    bRet = true;
+  return bRet;
+}
+
+
+bool IsDuelRoom() {
+  PacmanPtr room = FindMyRoom();
+  if (not room)
+    return false;
+
+  if (room->Duel() == kDuel)
+    return true;
+  return false;
+}
+
+
+bool IsMyPlayerLive() {
+  return IsPlayerLive(true);
+}
+
+
+bool IsOtherPlayerLive() {
+  return IsPlayerLive(false);
+}

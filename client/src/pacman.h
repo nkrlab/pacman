@@ -26,6 +26,8 @@ typedef boost::shared_ptr<Pacman> PacmanPtr;
 typedef std::vector<PacmanPtr> PacmanPtrVector;
 typedef std::map<std::string, PacmanPtr> PacmanPtrMap;
 
+enum { kSingle = 0, kDuel = 1 };
+
 
 class Pacman {
  public:
@@ -56,6 +58,9 @@ class Pacman {
 
   int TimeLeft() { return time_left_; }
   void SetTimeLeft(int value) { time_left_ = value; }
+
+  int Duel() { return duel_; }
+  void SetDuel(int value) { duel_ = value; }
 
   std::string Name() { return name_; }
   void SetName(std::string value) { name_ = value; }
@@ -90,6 +95,7 @@ class Pacman {
   int level_number_;
   int remain_lives_;
   int time_left_;
+  int duel_;
 
   // string attributes
   std::string name_;

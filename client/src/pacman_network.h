@@ -19,8 +19,9 @@ void SendMessageLoadLevel(const int level_number);
 void SendMessagePacmanMove(const int virtual_key);
 void SendMessageLogout();
 void SendMessageShowRoomList();
-void SendMessageMakeRoomGameStart(const char *room_name);
+void SendMessageMakeRoom(const char *room_name, const bool is_duel);
 void SendMessageGameEndLeaveRoom();
+void SendMessageJoinRoom(const int room_number);
 void NetworkTerminate();
 void HandlingReceivedPacket();
 

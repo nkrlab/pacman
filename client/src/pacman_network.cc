@@ -22,6 +22,9 @@
 #endif
 
 #include <deque>
+#include <iomanip>
+#include <locale>
+#include <sstream>
 #include <string>
 #include <utility>
 #include <vector>
@@ -157,6 +160,7 @@ class PacmanProtocolHandler {
       int packed_length;
       ::memcpy(&packed_length, read_buffer_, sizeof(uint32_t));
       size_t payload_length = ntohl(packed_length);
+
       if (payload_length > (buffer_size_/2)) {
         // payload length가 buffer 크기의 절반보다 크다면 비정상으로 간주함.
         assert(false);
@@ -373,7 +377,7 @@ void SendMessageShowRoomList() {
 }
 
 
-void SendMessageMakeRoomGameStart(const char *room_name) {
+void SendMessageMakeRoom(const char *room_name, const bool is_duel) {
   // set account message type
   ClientAccountMessage ca_msg;
   ca_msg.set_type(ClientAccountMessage::kClientAppMessage);
@@ -387,6 +391,7 @@ void SendMessageMakeRoomGameStart(const char *room_name) {
   MakeRoomGameStart *room = msg->MutableExtension(make_room_game_start);
   // set room name
   room->set_name(room_name);
+  room->set_duel(is_duel);
 
   // send
   std::string data;
@@ -407,6 +412,30 @@ void SendMessageGameEndLeaveRoom() {
   ClientAppMessage *msg = ca_msg.mutable_app_message();
   msg->SetExtension(client_message_type,
                     ClientAppMessageType::kGameEndLeaveRoom);
+
+  // send
+  std::string data;
+  boost::shared_ptr<unsigned char> buffer;
+  int buffer_size;
+  ca_msg.SerializeToString(&data);
+  PackStringToBuffer(data, &buffer, &buffer_size);
+  handler->Write(buffer, buffer_size);
+}
+
+
+void SendMessageJoinRoom(const int room_number) {
+  // set account message type
+  ClientAccountMessage ca_msg;
+  ca_msg.set_type(ClientAccountMessage::kClientAppMessage);
+
+  // set join room type
+  ClientAppMessage *msg = ca_msg.mutable_app_message();
+  msg->SetExtension(client_message_type,
+                    ClientAppMessageType::kJoinRoom);
+
+  // set join room number
+  JoinRoom *join = msg->MutableExtension(join_room);
+  join->set_room_number(room_number);
 
   // send
   std::string data;

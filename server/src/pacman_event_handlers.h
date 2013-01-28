@@ -19,6 +19,7 @@
 namespace pacman {
 
 enum { kNotLoaded = 0, kLoadComplete = 1 };
+enum { kSingle = 0, kDuel = 1 };
 
 // the one and only world object.
 extern PacmanPtr the_world;
@@ -27,9 +28,9 @@ extern PacmanPtr the_world;
 extern fun::Account::Ptr the_current_account;
 
 // players methods.
-PacmanPtr FindPlayer(const string &account_id);
-void InsertPlayer(const string &account_id, const PacmanPtr &player);
-void ErasePlayer(const string &account_id);
+PacmanPtr FindPlayer(const string &player_name);
+void InsertPlayer(const string &player_name, const PacmanPtr &player);
+void ErasePlayer(const string &player_name);
 
 // account message handlers.
 void OnLoadLevel(const PacmanPtr &player, const ::LoadLevel &msg);
@@ -38,6 +39,7 @@ void OnShowRoomList();
 void OnMakeRoomGameStart(const PacmanPtr &player,
                          const ::MakeRoomGameStart &msg);
 void OnGameEndLeaveRoom(const PacmanPtr &player);
+void OnJoinRoom(const PacmanPtr &player, const ::JoinRoom &msg);
 
 // game tick
 void GameTick();

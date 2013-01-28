@@ -27,23 +27,23 @@ PacmanPtr the_world;
 fun::Account::Ptr the_current_account;
 
 
-PacmanPtr FindPlayer(const string &account_id ) {
-  return the_world->players().Find(account_id);
+PacmanPtr FindPlayer(const string &player_name) {
+  return the_world->players().Find(player_name);
 }
 
 
-void InsertPlayer(const string &account_id, const PacmanPtr &player) {
+void InsertPlayer(const string &player_name, const PacmanPtr &player) {
   PacmanPtrMap players = the_world->players();
-  players.Insert(account_id, player);
+  players.Insert(player_name, player);
   the_world->set_players(players);
 
-  player->set_name(account_id);
+  player->set_name(player_name);
 }
 
 
-void ErasePlayer(const string &account_id) {
+void ErasePlayer(const string &player_name) {
   PacmanPtrMap players = the_world->players();
-  players.erase(account_id);
+  players.erase(player_name);
   the_world->set_players(players);
 }
 
@@ -73,6 +73,12 @@ void OnMakeRoomGameStart(const PacmanPtr &player,
 
   // set game room name
   game_room->set_name(msg.name());
+
+  // set game room duel
+  if (msg.duel())
+    game_room->set_duel(kDuel);
+  else
+    game_room->set_duel(kSingle);
 
   // remove player in lobbys
   ErasePlayer(player->name());
@@ -326,6 +332,25 @@ void OnPacmanMove(const PacmanPtr &player, const ::PacmanMove &msg) {
 }
 
 
+void OnJoinRoom(const PacmanPtr &player, const ::JoinRoom &msg) {
+  // 클라이언트에서 받은 메시지에서 join 하려는 방 번호를 추출한다.
+  const size_t room_number = msg.room_number();
+  const size_t size = the_world->game_rooms().size();
+
+  if (room_number > size)
+    return;
+
+  PacmanPtr game_room = the_world->game_rooms().at(room_number);
+  if (not game_room->duel())
+    return;
+
+  // add player to game room
+  PacmanPtrMap players = game_room->players();
+  players.Insert(player->name(), player);
+  game_room->set_players(players);
+}
+
+
 void GameTick() {
   size_t size = the_world->game_rooms().size();
   for (size_t i = 0; i < size; ++i) {
@@ -336,11 +361,13 @@ void GameTick() {
          ++it) {
       PacmanPtr player = Pacman::Cast(it->second);
       if (player->load_status() == kLoadComplete) {
-        // 클라이언트에서 요청이 오면
-        // Ghost 들을 이동시킨다.
-        MoveGhosts(player);
-        // 충돌 체크를 한다.
-        CheckCollision(player);
+        if (player->remain_lives() >= 0) {
+          // 클라이언트에서 요청이 오면
+          // Ghost 들을 이동시킨다.
+          MoveGhosts(player);
+          // 충돌 체크를 한다.
+          CheckCollision(player);
+        }
       }
     }
   }

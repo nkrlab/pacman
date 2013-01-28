@@ -18,6 +18,7 @@ message ClientAppMessageType {
     kShowRoomList = 1003;
     kMakeRoomGameStart = 1004;
     kGameEndLeaveRoom = 1005;
+    kJoinRoom = 1006;
   }
 }
 
@@ -29,6 +30,7 @@ extend ClientAppMessage {
   optional ShowRoomList show_room_list = 1003;
   optional MakeRoomGameStart make_room_game_start = 1004;
   optional GameEndLeaveRoom game_end_reave_room = 1005;
+  optional JoinRoom join_room = 1006;
 }
 
 message ServerAppMessageType {

@@ -24,20 +24,31 @@
       players    - player        -> 로비의 player들
 ------------------------------------------------------------*/
 
+struct RoomInfo {
+  std::string room_name_;
+  bool duel_;
+};
+
 void SetAccountId(const std::string &name);
-std::vector<std::string> GetRoomList();
+std::vector<RoomInfo> GetRoomList();
 
 void InitializeWorld();
 void UpdateFromSerializedBuffer(const std::string &buffer);
 
-int GamePoints();
-int GhostsInARow();
-bool Invincible();
-int LevelNumber();
-int RemainLives();
-int TimeLeft();
-std::vector<std::vector<int> > Locations();
-std::vector<std::vector<int> > Level();
+int GamePoints(bool is_my_player);
+int GhostsInARow(bool is_my_player);
+bool Invincible(bool is_my_player);
+int LevelNumber(bool is_my_player);
+int RemainLives(bool is_my_player);
+int TimeLeft(bool is_my_player);
+std::vector<std::vector<int> > Locations(bool is_my_player);
+std::vector<std::vector<int> > Level(bool is_my_player);
+
+bool IsValidRoomNumber(int room_number);
+bool HasOtherPlayer();
+bool IsDuelRoom();
+bool IsMyPlayerLive();
+bool IsOtherPlayerLive();
 
 
 #endif  // CLIENT_SRC_PACMAN_UTIL_H_

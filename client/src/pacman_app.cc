@@ -34,7 +34,8 @@ namespace {
 
 // Game Continuous
 enum GameContinuous { kNormal = 0, kLevelEnd, kEscape, kWaitingRoomList,
-                      kReceivedRoomList };
+                      kReceivedRoomList, kWaitOtherPlayerJoin,
+                      kReceivedOtherPlayerJoin };
 
 // How much of a delay is in the game
 const int kSpeedOfGame = 170;
@@ -131,16 +132,43 @@ void MainLoop() {
       need_sleep = false;
     }
 
-    // Net Simulate
-    DrawWindow(RemainLives(), LevelNumber(), GamePoints(), Invincible(),
-               TimeLeft(), Locations(), Level());
+    if ((not IsDuelRoom()) || (not HasOtherPlayer())) {
+      if (not IsMyPlayerLive()) {
+        game_continuous = kEscape;
 
-    // Net Pacman Move
-    SendMessagePacmanMove(virtualized_key);
+      } else {
+        // draw my window
+        DrawMyWindow();
+        ClearOtherWindow();
+        // send pacman move
+        SendMessagePacmanMove(virtualized_key);
+      }
+    } else {
+      if ((not IsMyPlayerLive()) && (not IsOtherPlayerLive())) {
+        game_continuous = kEscape;
+
+      } else if (IsMyPlayerLive()) {
+        // draw my window
+        DrawMyWindow();
+        // send pacman move
+        SendMessagePacmanMove(virtualized_key);
+        if (IsOtherPlayerLive()) {
+          // draw other window
+          DrawOtherWindow();
+        } else {
+          ClearOtherWindow();
+        }
+
+      } else {
+        ClearMyWindow();
+        // draw other window
+        DrawOtherWindow();
+      }
+    }
 
     // infinite loop sleep
     boost::this_thread::sleep(boost::posix_time::milliseconds(10));
-  };
+  }
 
   usleep(SLEEP_TIME);
 }
@@ -178,7 +206,23 @@ void WaitForLoginResponse() {
 }
 
 
-void LobbyProcess() {
+void WaitForOtherPlayerJoin() {
+  game_continuous = kWaitOtherPlayerJoin;
+  while (true) {
+    // check received login response
+    if (game_continuous == kReceivedOtherPlayerJoin)
+      break;
+
+    // packet operate
+    HandlingReceivedPacket();
+
+    // infinite loop sleep
+    boost::this_thread::sleep(boost::posix_time::milliseconds(10));
+  }
+}
+
+
+LobbyExitCode LobbyProcess() {
   SendMessageShowRoomList();
   WaitingForRoomList();
 
@@ -194,18 +238,34 @@ void LobbyProcess() {
     // infinite loop sleep
     boost::this_thread::sleep(boost::posix_time::milliseconds(10));
   }
+  game_continuous = kNormal;
 
   if (exit_code == kMakeRoom) {
-    game_continuous = kNormal;
-    MakeRoomScreen();
-  } else if (exit_code == kEscapeLobby) {
-    game_continuous = kEscape;
+    bool is_duel = MakeRoomScreen();
+    if (is_duel)
+      exit_code = kMakeRoomDuel;
+    else
+      exit_code = kMakeRoomSingle;
+  } else if (exit_code == kJoinRoom) {
+    while (true) {
+      int room_number = JoinRoomScreen(GetRoomList());
+      if (IsValidRoomNumber(room_number)) {
+        // Send Join Room Number
+        SendMessageJoinRoom(room_number);
+        break;
+      }
+
+      // infinite loop sleep
+      boost::this_thread::sleep(boost::posix_time::milliseconds(10));
+    }
   }
+
+  return exit_code;
 }
 
 
 void GameLevelLoop() {
-  for (volatile int i = 1; i < 10; ++i) {
+  for (int i = 1; i < 10; ++i) {
     // Send Level Number
     SendMessageLoadLevel(i);
     current_level = i;
@@ -218,6 +278,7 @@ void GameLevelLoop() {
       // clear all fun object
       InitializeWorld();
     } else if (game_continuous == kEscape) {
+      ClearOtherWindow();
       game_continuous = kNormal;
       break;
     }
@@ -243,7 +304,7 @@ void DoExitProgram(const char *kMessage) {
 
 
 void OnChangeExitMessage(const std::string &/*exit_message*/) {
-  game_continuous = kEscape;
+  // game_continuous = kEscape;
 }
 
 
@@ -269,6 +330,12 @@ void ReceivedLevelNumber(volatile int level_number) {
 
 void ReceivedLoginResponse() {
   login_complete = true;
+}
+
+
+void ReceivedOtherPlayerJoin() {
+  if (game_continuous == kWaitOtherPlayerJoin)
+    game_continuous = kReceivedOtherPlayerJoin;
 }
 
 
@@ -299,12 +366,15 @@ int main(int /*argc*/, char **/*argv*/) {
 
     while (true) {
       // Lobby process
-      LobbyProcess();
+      LobbyExitCode exit_code = LobbyProcess();
 
       // check game continuous
-      if (game_continuous == kEscape) {
+      if (exit_code == kEscapeLobby) {
         SendMessageLogout();
+        game_continuous = kEscape;
         break;
+      } else if (exit_code == kMakeRoomDuel) {
+        WaitForOtherPlayerJoin();
       }
 
       // Game level loop

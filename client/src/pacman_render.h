@@ -14,10 +14,11 @@
 #include <vector>
 
 #include "src/pacman_constants.h"
+#include "src/pacman_util.h"
 
 
-enum LobbyExitCode { kShowRooms = 0, kMakeRoom, kEscapeLobby };
-
+enum LobbyExitCode { kShowRooms = 0, kMakeRoom, kMakeRoomDuel, kMakeRoomSingle,
+                     kJoinRoom, kEscapeLobby };
 
 // Make ncurses windows
 void CreateWindows(const int kXStart, const int kYStart,
@@ -28,27 +29,35 @@ void LoginScreen();
 
 // Show lobby room list..
 // Return value means true -> make room, false -> refresh
-LobbyExitCode LobbyScreen(std::vector<std::string> kRoomList);
+LobbyExitCode LobbyScreen(std::vector<RoomInfo> room_list);
 
 // Show make room screen
-void MakeRoomScreen();
+bool MakeRoomScreen();
 
-// Refresh display
-void DrawWindow(const int kLives, const int kLevelNumber,
-                const int kPoints, const bool kInvincible,
-                const int kTimeLeft,
-                const std::vector<std::vector<int> > &kLocate,
-                const std::vector<std::vector<int> > &kLevel);
+// Join room
+int JoinRoomScreen(std::vector<RoomInfo> room_list);
+
+// Draw my window
+void DrawMyWindow();
+
+// Draw other window
+void DrawOtherWindow();
 
 // Show ghost die
 void ShowGhostDie(const int kXPos, const int kYPos,
-                  const int kGhostInARow);
+                  const int kGhostInARow, const bool is_my_play);
 
 // Show pacman die
-void ShowPacmanDie(const int kXPos, const int kYPos);
+void ShowPacmanDie(const int kXPos, const int kYPos, const bool is_my_play);
 
 // Destroy ncurses windows
 void DestroyWindows();
+
+// Clear other ncurses windows
+void ClearOtherWindow();
+
+// Clear my ncurses windows
+void ClearMyWindow();
 
 
 #endif  // CLIENT_SRC_PACMAN_RENDER_H_

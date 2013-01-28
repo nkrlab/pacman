@@ -22,6 +22,7 @@ Pacman::Pacman() {
   level_number_ = 0;
   remain_lives_ = 3;
   time_left_ = 0;
+  duel_ = kDuel;
 
   // string attributes
   name_ = "";
@@ -67,6 +68,10 @@ PacmanPtr Pacman::CreateFromSerialized(const fun::Archive &archive) {
   int_value = reader->ReadInteger("time_left");
   if (int_value != fun::IntegerPtr())
     obj_ptr->SetTimeLeft(*int_value);
+
+  int_value = reader->ReadInteger("duel");
+  if (int_value != fun::IntegerPtr())
+    obj_ptr->SetDuel(*int_value);
 
   fun::StringPtr str_value = reader->ReadString("name");
   if (str_value != fun::StringPtr())

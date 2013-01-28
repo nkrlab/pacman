@@ -19,15 +19,15 @@
 namespace {
 
 // For ncurses
-WINDOW *win_game;
-WINDOW *win_status;
+WINDOW *win_my_game, *win_other_game;
+WINDOW *win_my_status, *win_other_status;
 
 // For colors
 enum { kWall = 1, kNormal, kPellet, kPowerUp, kGhostWall,
        kGhost1, kGhost2, kGhost3, kGhost4, kBlueGhost, kPacman };
 
 // For input string
-enum InputStringType { kID = 1, kPassword, kRoomName };
+enum InputStringType { kID = 1, kPassword, kRoomName, kNumber };
 
 
 // Start up ncurses
@@ -77,11 +77,14 @@ void GetInputString(std::string *str, InputStringType input_type) {
   int y_pos = 0;
   switch (input_type) {
   case kID:
-  case kRoomName:
+  case kNumber:
     y_pos = 22;
     break;
   case kPassword:
     y_pos = 23;
+    break;
+  case kRoomName:
+    y_pos = 20;
     break;
   }
 
@@ -98,45 +101,77 @@ void GetInputString(std::string *str, InputStringType input_type) {
           str->resize(size-1);
         }
       } else {
-        if (isprint(ch)) {
-          switch (input_type) {
-            case kID:
-            case kRoomName:
-              *str += ch;
-            break;
-            case kPassword:
-              *str += '*';
-            break;
+        if (input_type == kNumber) {
+          if (isdigit(ch)) {
+            *str += ch;
+          }
+        } else {
+          if (isprint(ch)) {
+            switch (input_type) {
+              case kID:
+              case kRoomName:
+                *str += ch;
+                break;
+              case kPassword:
+                *str += '*';
+                break;
+              case kNumber:
+                break;
+            }
           }
         }
       }
     }
 
     // between 12~column size clear
-    mvwprintw(win_game, y_pos, 12, "                ");
-    mvwprintw(win_game, y_pos, 12, "%s", str->c_str());
+    mvwprintw(win_my_game, y_pos, 12, "                ");
+    mvwprintw(win_my_game, y_pos, 12, "%s", str->c_str());
 
-    wrefresh(win_game);
+    wrefresh(win_my_game);
   }
 }
 
 
+bool GetDuelCheck() {
+  bool is_duel = true;
+  while (true) {
+    // non blocking wait for standard input
+    int ch = getch();
+    if (ch != ERR) {
+      if ((ch == '\n') || (ch == '\t')) {
+        break;
+      } else if (ch == ' ') {
+        is_duel = not is_duel;
+      }
+    }
+
+    if (is_duel)
+      mvwprintw(win_my_game, 21, 12, "(*)");
+    else
+      mvwprintw(win_my_game, 21, 12, "( )");
+    wrefresh(win_my_game);
+  }
+
+  return is_duel;
+}
+
+
 void ScreenStatusPush() {
-  wclear(win_game);
-  wrefresh(win_game);
-  wclear(win_status);
-  wrefresh(win_status);
-  wattron(win_game, COLOR_PAIR(kNormal));
+  wclear(win_my_game);
+  wrefresh(win_my_game);
+  wclear(win_my_status);
+  wrefresh(win_my_status);
+  wattron(win_my_game, COLOR_PAIR(kNormal));
   nl();
 }
 
 
 void ScreenStatusPop() {
   nonl();
-  wclear(win_game);
-  wrefresh(win_game);
-  wclear(win_status);
-  wrefresh(win_status);
+  wclear(win_my_game);
+  wrefresh(win_my_game);
+  wclear(win_my_status);
+  wrefresh(win_my_status);
 }
 
 }  // End of anonymous namespace
@@ -147,8 +182,11 @@ void CreateWindows(const int kXStart, const int kYStart,
   InitCurses();
   CheckScreenSize();
 
-  win_game = newwin(kXStart, kYStart, kXWidth, kYHeight);
-  win_status = newwin(3, 27, 29, 1);
+  win_my_game = newwin(kXStart, kYStart, kXWidth, kYHeight);
+  win_my_status = newwin(3, 27, 29, 1);
+
+  win_other_game = newwin(kXStart, kYStart, kXWidth, kYStart+1);
+  win_other_status = newwin(3, 27, 29, 29);
 }
 
 
@@ -156,9 +194,9 @@ void LoginScreen() {
   ScreenStatusPush();
   curs_set(1);
 
-  mvwprintw(win_game, 13, 3, "Enter your ID & Passwd");
-  mvwprintw(win_game, 22, 1, "ID       : ");
-  mvwprintw(win_game, 23, 1, "Passward : ");
+  mvwprintw(win_my_game, 13, 3, "Enter your ID & Passwd");
+  mvwprintw(win_my_game, 22, 1, "ID       : ");
+  mvwprintw(win_my_game, 23, 1, "Passward : ");
 
   std::string id_string, passward_string;
   GetInputString(&id_string, kID);
@@ -172,13 +210,15 @@ void LoginScreen() {
 }
 
 
-LobbyExitCode LobbyScreen(std::vector<std::string> kRoomList) {
+LobbyExitCode LobbyScreen(std::vector<RoomInfo> room_list) {
   LobbyExitCode exit_code = kShowRooms;
   ScreenStatusPush();
 
-  mvwprintw(win_game, 3, 10, "Room List");
-  mvwprintw(win_game, 22, 0, "To Make Room, Press \"C\"");
-  mvwprintw(win_game, 23, 0, "To Refresh List, Press \"L\"");
+  mvwprintw(win_my_game, 3, 10, "Room List");
+  mvwprintw(win_my_game, 21, 0, "To Make Room, Press \"C\"");
+  mvwprintw(win_my_game, 22, 0, "To Refresh List, Press \"L\"");
+  mvwprintw(win_my_game, 23, 0, "To Join Duel Room, Press \"J\"");
+  mvwprintw(win_my_game, 23, 0, "To Logout, Press \"Q\"");
 
   while (true) {
     int ch = getch();
@@ -189,16 +229,19 @@ LobbyExitCode LobbyScreen(std::vector<std::string> kRoomList) {
       } else if ((ch == 'l') || (ch == 'L')) {
         exit_code = kShowRooms;
         break;
+      } else if ((ch == 'j') || (ch == 'J')) {
+        exit_code = kJoinRoom;
+        break;
       } else if ((ch == 'q') || (ch == 'Q')) {
         exit_code = kEscapeLobby;
         break;
       }
     }
 
-    for (size_t i = 0; i < kRoomList.size(); ++i) {
-      mvwprintw(win_game, 5+i, 6, kRoomList[i].c_str());
+    for (size_t i = 0; i < room_list.size(); ++i) {
+      mvwprintw(win_my_game, 5+i, 6, room_list[i].room_name_.c_str());
     }
-    wrefresh(win_game);
+    wrefresh(win_my_game);
   }
 
   ScreenStatusPop();
@@ -206,20 +249,48 @@ LobbyExitCode LobbyScreen(std::vector<std::string> kRoomList) {
 }
 
 
-void MakeRoomScreen() {
+bool MakeRoomScreen() {
   ScreenStatusPush();
   curs_set(1);
 
-  mvwprintw(win_game, 13, 3, "Enter your room name");
-  mvwprintw(win_game, 22, 1, "Room Name: ");
+  mvwprintw(win_my_game, 13, 3, "Enter your room name");
+  mvwprintw(win_my_game, 20, 0, "Room Name : ");
+  mvwprintw(win_my_game, 21, 0, "Duel Check: (*)");
+  mvwprintw(win_my_game, 22, 0, "(Use Spece key)");
 
-  std::string room_name_string;
-  GetInputString(&room_name_string, kRoomName);
-
-  SendMessageMakeRoomGameStart(room_name_string.c_str());
+  std::string room_name;
+  GetInputString(&room_name, kRoomName);
+  bool is_duel = GetDuelCheck();
+  SendMessageMakeRoom(room_name.c_str(), is_duel);
 
   ScreenStatusPop();
   curs_set(0);
+
+  return is_duel;
+}
+
+
+int JoinRoomScreen(std::vector<RoomInfo> room_list) {
+  ScreenStatusPush();
+  curs_set(1);
+
+  mvwprintw(win_my_game, 3, 10, "Room List");
+  for (size_t i = 0; i < room_list.size(); ++i) {
+    mvwprintw(win_my_game, 5+i, 6, room_list[i].room_name_.c_str());
+  }
+
+  mvwprintw(win_my_game, 21, 3, "Enter room number");
+  mvwprintw(win_my_game, 22, 0, "Room Number : ");
+  wrefresh(win_my_game);
+
+  std::string room_number;
+  GetInputString(&room_number, kNumber);
+  int value = atoi(room_number.c_str());
+
+  ScreenStatusPop();
+  curs_set(0);
+
+  return value;
 }
 
 
@@ -227,12 +298,22 @@ void DrawWindow(const int kLives, const int kLevelNumber,
                 const int kPoints, const bool kInvincible,
                 const int kTimeLeft,
                 const std::vector<std::vector<int> > &kLocate,
-                const std::vector<std::vector<int> > &kLevel) {
+                const std::vector<std::vector<int> > &kLevel,
+                const bool is_my_play) {
   if (kLevel.size() < static_cast<size_t>(kLevelWidth))
     return;
   if (kLocate.size() < static_cast<size_t>(kChrIndexPacman))
     return;
   int attr = A_NORMAL;
+
+  WINDOW *win_game, *win_status;
+  if (is_my_play) {
+    win_game = win_my_game;
+    win_status = win_my_status;
+  } else {
+    win_game = win_other_game;
+    win_status = win_other_status;
+  }
 
   // Display level array
   for (int i = 0; i < kLevelWidth; ++i) {
@@ -316,15 +397,43 @@ void DrawWindow(const int kLives, const int kLevelNumber,
 }
 
 
+void DrawMyWindow() {
+  DrawWindow(RemainLives(true), LevelNumber(true), GamePoints(true),
+             Invincible(true), TimeLeft(true), Locations(true), Level(true),
+             true);
+}
+
+
+void DrawOtherWindow() {
+  DrawWindow(RemainLives(false), LevelNumber(false), GamePoints(false),
+             Invincible(false), TimeLeft(false), Locations(false),
+             Level(false), false);
+}
+
+
 void ShowGhostDie(const int kXPos, const int kYPos,
-                  const int kGhostInARow) {
+                  const int kGhostInARow, const bool is_my_play) {
+  WINDOW *win_game;
+  if (is_my_play) {
+    win_game = win_my_game;
+  } else {
+    win_game = win_other_game;
+  }
+
   mvwprintw(win_game, kXPos, kYPos - 1, "%d",
             (kGhostInARow * 20));
   wrefresh(win_game);
 }
 
 
-void ShowPacmanDie(const int kXPos, const int kYPos) {
+void ShowPacmanDie(const int kXPos, const int kYPos, const bool is_my_play) {
+  WINDOW *win_game;
+  if (is_my_play) {
+    win_game = win_my_game;
+  } else {
+    win_game = win_other_game;
+  }
+
   wattron(win_game, COLOR_PAIR(kPacman));
   mvwprintw(win_game, kXPos, kYPos, "X");
   wrefresh(win_game);
@@ -333,4 +442,22 @@ void ShowPacmanDie(const int kXPos, const int kYPos) {
 
 void DestroyWindows() {
   endwin();
+}
+
+
+// Clear other ncurses windows
+void ClearOtherWindow() {
+  wclear(win_other_game);
+  wrefresh(win_other_game);
+  wclear(win_other_status);
+  wrefresh(win_other_status);
+}
+
+
+// Clear my ncurses windows
+void ClearMyWindow() {
+  wclear(win_my_game);
+  wrefresh(win_my_game);
+  wclear(win_my_status);
+  wrefresh(win_my_status);
 }

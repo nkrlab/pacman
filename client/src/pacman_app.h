@@ -23,6 +23,7 @@ void SetNeedSleep();
 void ReceivedRoomList();
 void ReceivedLevelNumber(int level_number);
 void ReceivedLoginResponse();
+void ReceivedOtherPlayerJoin();
 
 
 #endif  // CLIENT_SRC_PACMAN_APP_H_

@@ -9,7 +9,7 @@
 #include <funapi/api/clock.h>
 #include <funapi/object/object.h>
 #include <funapi/common/serialization/bson_archive.h>
-#include <funapi/system/logging.h>
+#include <glog/logging.h>
 
 #include "funapi_event_handlers.h"
 #include "pacman_event_handlers.h"
@@ -54,9 +54,9 @@ void OnAccountLogin(const fun::Account::Ptr &account) {
                                        account);
 
   PacmanPtr player = Pacman::Cast(account->object());
-  InsertPlayer(account->account_id(), player);
+  InsertPlayer(account->account_id().local_account(), player);
 
-  FUN_LOG_INFO << "account login[" << account->account_id() << "]";
+  LOG(INFO) << "account login[" << account->account_id() << "]";
 }
 
 
@@ -65,9 +65,9 @@ void OnAccountLogout(const fun::Account::Ptr &account) {
                                        account);
 
   PacmanPtr player = Pacman::Cast(account->object());
-  ErasePlayer(account->account_id());
+  ErasePlayer(account->account_id().local_account());
 
-  FUN_LOG_INFO << "account logout[" << account->account_id() << "]";
+  LOG(INFO) << "account logout[" << account->account_id() << "]";
 }
 
 
@@ -98,8 +98,11 @@ void OnAccountMessage(const fun::Account::Ptr &account,
     case ::ClientAppMessageType::kPacmanMove:
       OnPacmanMove(player, msg.GetExtension(pacman_move));
       break;
+    case ::ClientAppMessageType::kJoinRoom:
+      OnJoinRoom(player, msg.GetExtension(join_room));
+      break;
     default:
-      FUN_LOG_ERR << "Unknown client message type: " << (int64_t)msg_type;
+      LOG(INFO) << "Unknown client message type: " << (int64_t)msg_type;
       break;
   }
 }

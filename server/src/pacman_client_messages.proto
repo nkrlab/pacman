@@ -17,7 +17,12 @@ message ShowRoomList {
 
 message MakeRoomGameStart {
   optional string name = 1;
+  optional bool duel = 2;
 }
 
 message GameEndLeaveRoom {
+}
+
+message JoinRoom {
+  optional int32 room_number = 1;
 }
