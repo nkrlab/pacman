@@ -53,9 +53,6 @@ void OnAccountLogin(const fun::Account::Ptr &account) {
   fun::Multicaster::Get().EnterChannel(kRoomChannelName, kRoomChannelId,
                                        account);
 
-  the_world->set_game_rooms(the_world->game_rooms());
-  the_world->set_players(the_world->players());
-
   PacmanPtr player = Pacman::Cast(account->object());
   InsertPlayer(account->account_id(), player);
 

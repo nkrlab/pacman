@@ -33,7 +33,8 @@
 namespace {
 
 // Game Continuous
-enum GameContinuous { kNormal = 0, kLevelEnd, kEscape, kWaitingRoomList };
+enum GameContinuous { kNormal = 0, kLevelEnd, kEscape, kWaitingRoomList,
+                      kReceivedRoomList };
 
 // How much of a delay is in the game
 const int kSpeedOfGame = 170;
@@ -147,12 +148,13 @@ void MainLoop() {
 
 void WaitingForRoomList() {
   game_continuous = kWaitingRoomList;
+  SendMessage(kShowRoomList, kNoUse);
 
   while (true) {
     // Net Packet Operate
     HandlingReceivedPacket();
 
-    if (game_continuous == kNormal)
+    if (game_continuous == kReceivedRoomList)
       break;
 
     // infinite loop sleep
@@ -251,13 +253,16 @@ void SetNeedSleep() {
 
 
 void ReceivedRoomList() {
-  game_continuous = kNormal;
+  if (game_continuous == kWaitingRoomList)
+    game_continuous = kReceivedRoomList;
 }
 
 
 void ReceivedLevelNumber(volatile int level_number) {
-  if (current_level != level_number) {
-    game_continuous = kLevelEnd;
+  if (game_continuous == kNormal) {
+    if (current_level != level_number) {
+      game_continuous = kLevelEnd;
+    }
   }
 }
 
