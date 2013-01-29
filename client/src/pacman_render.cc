@@ -4,9 +4,12 @@
 // must not be used, disclosed, copied, or distributed without the prior
 // consent of Nexon Korea Corporation.
 
+
 #include "src/pacman_render.h"
 
+#include <boost/timer.hpp>
 #include <curses.h>
+#include <math.h>
 #include <stdlib.h>
 #include <unistd.h>
 
@@ -23,12 +26,18 @@ namespace {
 WINDOW *win_my_game, *win_other_game;
 WINDOW *win_my_status, *win_other_status;
 
+// Timer for refresh message
+boost::timer timer;
+
 // For colors
 enum { kWall = 1, kNormal, kPellet, kPowerUp, kGhostWall,
        kGhost1, kGhost2, kGhost3, kGhost4, kBlueGhost, kPacman };
 
 // For input string
 enum InputStringType { kID = 1, kPassword, kRoomName, kNumber };
+
+// Define invalid room index
+enum { kInvalidRoomIndex = -1 };
 
 
 // Start up ncurses
@@ -271,7 +280,8 @@ bool MakeRoomScreen() {
 }
 
 
-int JoinRoomScreen(std::vector<RoomInfo> room_list) {
+int JoinRoomScreen(std::vector<RoomInfo> room_list,
+                   bool show_invalid_room_message) {
   ScreenStatusPush();
   curs_set(1);
 
@@ -280,13 +290,20 @@ int JoinRoomScreen(std::vector<RoomInfo> room_list) {
     mvwprintw(win_my_game, 5+i, 6, room_list[i].room_name_.c_str());
   }
 
+  if (show_invalid_room_message) {
+    mvwprintw(win_my_game, 16, 0, "Please try another number");
+  }
+
   mvwprintw(win_my_game, 21, 3, "Enter room number");
   mvwprintw(win_my_game, 22, 0, "Room Number : ");
   wrefresh(win_my_game);
 
   std::string room_number;
   GetInputString(&room_number, kNumber);
-  int value = atoi(room_number.c_str());
+  int value = kInvalidRoomIndex;
+  if (room_number.size() > 0) {
+    value = atoi(room_number.c_str());
+  }
 
   ScreenStatusPop();
   curs_set(0);
@@ -447,18 +464,37 @@ void DestroyWindows() {
 
 
 // Clear other ncurses windows
-void ClearOtherWindow() {
+void ClearOtherWindow(WindowClearWithMessage message) {
   wclear(win_other_game);
-  wrefresh(win_other_game);
   wclear(win_other_status);
+
+  if (message == kWin)
+    mvwprintw(win_other_game, 12, 3, "Win!!");
+
+  wrefresh(win_other_game);
   wrefresh(win_other_status);
 }
 
 
 // Clear my ncurses windows
-void ClearMyWindow() {
+void ClearMyWindow(WindowClearWithMessage message) {
   wclear(win_my_game);
-  wrefresh(win_my_game);
   wclear(win_my_status);
+
+  if (message == kWaitJoin) {
+    double time = timer.elapsed();
+    if (fmod(time, 0.1) > 0.02)
+      mvwprintw(win_my_game, 7, 3, "Join Waiting...");
+  } else if (message == kLose) {
+    mvwprintw(win_my_game, 12, 3, "Lose!!");
+  }
+
+  wrefresh(win_my_game);
   wrefresh(win_my_status);
+}
+
+
+// Init timer for message refresh
+void InitTimerForMessageRefresh() {
+  timer.restart();
 }

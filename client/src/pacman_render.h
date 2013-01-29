@@ -19,6 +19,7 @@
 
 enum LobbyExitCode { kShowRooms = 0, kMakeRoom, kMakeRoomDuel, kMakeRoomSingle,
                      kJoinRoom, kEscapeLobby };
+enum WindowClearWithMessage { kNone = 0, kWaitJoin, kWin, kLose };
 
 // Make ncurses windows
 void CreateWindows(const int kXStart, const int kYStart,
@@ -35,7 +36,8 @@ LobbyExitCode LobbyScreen(std::vector<RoomInfo> room_list);
 bool MakeRoomScreen();
 
 // Join room
-int JoinRoomScreen(std::vector<RoomInfo> room_list);
+int JoinRoomScreen(std::vector<RoomInfo> room_list,
+                   bool show_invalid_room_message);
 
 // Draw my window
 void DrawMyWindow();
@@ -54,10 +56,13 @@ void ShowPacmanDie(const int kXPos, const int kYPos, const bool is_my_play);
 void DestroyWindows();
 
 // Clear other ncurses windows
-void ClearOtherWindow();
+void ClearOtherWindow(WindowClearWithMessage message);
 
 // Clear my ncurses windows
-void ClearMyWindow();
+void ClearMyWindow(WindowClearWithMessage message);
+
+// Init timer for message refresh
+void InitTimerForMessageRefresh();
 
 
 #endif  // CLIENT_SRC_PACMAN_RENDER_H_

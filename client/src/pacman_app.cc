@@ -139,7 +139,10 @@ void MainLoop() {
       } else {
         // draw my window
         DrawMyWindow();
-        ClearOtherWindow();
+        if (not HasOtherPlayer())
+          ClearOtherWindow(kWin);
+        else
+          ClearOtherWindow(kNone);
         // send pacman move
         SendMessagePacmanMove(virtualized_key);
       }
@@ -156,11 +159,11 @@ void MainLoop() {
           // draw other window
           DrawOtherWindow();
         } else {
-          ClearOtherWindow();
+          ClearOtherWindow(kWin);
         }
 
       } else {
-        ClearMyWindow();
+        ClearMyWindow(kLose);
         // draw other window
         DrawOtherWindow();
       }
@@ -208,6 +211,10 @@ void WaitForLoginResponse() {
 
 void WaitForOtherPlayerJoin() {
   game_continuous = kWaitOtherPlayerJoin;
+
+  // init timer for message refresh
+  InitTimerForMessageRefresh();
+
   while (true) {
     // check received login response
     if (game_continuous == kReceivedOtherPlayerJoin)
@@ -215,6 +222,9 @@ void WaitForOtherPlayerJoin() {
 
     // packet operate
     HandlingReceivedPacket();
+
+    // show waiting message
+    ClearMyWindow(kWaitJoin);
 
     // infinite loop sleep
     boost::this_thread::sleep(boost::posix_time::milliseconds(10));
@@ -247,12 +257,17 @@ LobbyExitCode LobbyProcess() {
     else
       exit_code = kMakeRoomSingle;
   } else if (exit_code == kJoinRoom) {
+    bool show_invalid_room_message = false;
+
     while (true) {
-      int room_number = JoinRoomScreen(GetRoomList());
+      int room_number = JoinRoomScreen(GetRoomList(),
+                                       show_invalid_room_message);
       if (IsValidRoomNumber(room_number)) {
         // Send Join Room Number
         SendMessageJoinRoom(room_number);
         break;
+      } else {
+        show_invalid_room_message = true;
       }
 
       // infinite loop sleep
@@ -278,7 +293,7 @@ void GameLevelLoop() {
       // clear all fun object
       InitializeWorld();
     } else if (game_continuous == kEscape) {
-      ClearOtherWindow();
+      ClearOtherWindow(kNone);
       game_continuous = kNormal;
       break;
     }
