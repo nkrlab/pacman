@@ -216,9 +216,9 @@ LobbyExitCode LobbyScreen(std::vector<RoomInfo> room_list) {
   ScreenStatusPush();
 
   mvwprintw(win_my_game, 3, 10, "Room List");
-  mvwprintw(win_my_game, 21, 0, "To Make Room, Press \"C\"");
-  mvwprintw(win_my_game, 22, 0, "To Refresh List, Press \"L\"");
-  mvwprintw(win_my_game, 23, 0, "To Join Duel Room, Press \"J\"");
+  mvwprintw(win_my_game, 20, 0, "To Make Room, Press \"C\"");
+  mvwprintw(win_my_game, 21, 0, "To Refresh List, Press \"L\"");
+  mvwprintw(win_my_game, 22, 0, "To Join Duel Room, Press \"J\"");
   mvwprintw(win_my_game, 23, 0, "To Logout, Press \"Q\"");
 
   while (true) {
