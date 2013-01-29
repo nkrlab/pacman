@@ -4,15 +4,16 @@
 // must not be used, disclosed, copied, or distributed without the prior
 // consent of Nexon Korea Corporation.
 
-#include <stdlib.h>
-#include <curses.h>
+#include "src/pacman_render.h"
 
+#include <curses.h>
+#include <stdlib.h>
 #include <unistd.h>
+
 #include <string>
 
 #include "src/pacman_app.h"
 #include "src/pacman_network.h"
-#include "src/pacman_render.h"
 #include "src/pacman_util.h"
 
 
