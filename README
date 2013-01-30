@@ -34,7 +34,12 @@ Next, run the client.
 $ cd client/build; ./pacman
 
 
+And then login screen shows up, you can enter id and password.
+For now, any word will be okay for purpose of test.
+
+
 You can control Pacman using arrow keys, and Ctrl+C will terminate the client.
-Depending on branch, you may be able to use `q' key to return to the top menu.
+If you want to logout, use `q' key.
+
 
 Enjoy the game!
