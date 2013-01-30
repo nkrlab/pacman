@@ -353,8 +353,7 @@ void SendMessage(const kPacketType kType, const int value) {
 
       // account
       AccountLoginRequest *login = ca_msg.mutable_login();
-      login->set_account_id("minsu");
-      login->set_auth_key("park");
+      login->set_local_account("minsu");
     }
     break;
     case kLoadLevel: {
