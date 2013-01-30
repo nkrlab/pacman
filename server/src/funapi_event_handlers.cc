@@ -57,7 +57,7 @@ void OnAccountLogin(const fun::Account::Ptr &account) {
   the_world->set_players(the_world->players());
 
   PacmanPtr player = Pacman::Cast(account->object());
-  InsertPlayer(account->account_id(), player);
+  InsertPlayer(account->account_id().local_account(), player);
 
   FUN_LOG_INFO << "account login[" << account->account_id() << "]";
 }
@@ -68,7 +68,7 @@ void OnAccountLogout(const fun::Account::Ptr &account) {
                                        account);
 
   PacmanPtr player = Pacman::Cast(account->object());
-  ErasePlayer(account->account_id());
+  ErasePlayer(account->account_id().local_account());
 
   FUN_LOG_INFO << "account logout[" << account->account_id() << "]";
 }

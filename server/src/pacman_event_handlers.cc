@@ -26,23 +26,23 @@ PacmanPtr the_world;
 fun::Account::Ptr the_current_account;
 
 
-PacmanPtr FindPlayer(const string &account_id ) {
-  return the_world->players().Find(account_id);
+PacmanPtr FindPlayer(const string &player_name) {
+  return the_world->players().Find(player_name);
 }
 
 
-void InsertPlayer(const string &account_id, const PacmanPtr &player) {
+void InsertPlayer(const string &player_name, const PacmanPtr &player) {
   PacmanPtrMap players = the_world->players();
-  players.Insert(account_id, player);
+  players.Insert(player_name, player);
   the_world->set_players(players);
 
-  player->set_name(account_id);
+  player->set_name(player_name);
 }
 
 
-void ErasePlayer(const string &account_id) {
+void ErasePlayer(const string &player_name) {
   PacmanPtrMap players = the_world->players();
-  players.erase(account_id);
+  players.erase(player_name);
   the_world->set_players(players);
 }
 

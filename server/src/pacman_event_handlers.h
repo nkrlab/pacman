@@ -27,9 +27,9 @@ extern PacmanPtr the_world;
 extern fun::Account::Ptr the_current_account;
 
 // players methods.
-PacmanPtr FindPlayer(const string &account_id);
-void InsertPlayer(const string &account_id, const PacmanPtr &player);
-void ErasePlayer(const string &account_id);
+PacmanPtr FindPlayer(const string &player_name);
+void InsertPlayer(const string &player_name, const PacmanPtr &player);
+void ErasePlayer(const string &player_name);
 
 // account message handlers.
 void OnLoadLevel(const PacmanPtr &player, const ::LoadLevel &msg);

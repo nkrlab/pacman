@@ -270,7 +270,7 @@ void NetworkInitialize() {
 
 
 void SendMessage(const kPacketType kType, const char *string1,
-                 const char *string2) {
+                 const char */*string2*/) {
   // set account message type
   ClientAccountMessage ca_msg;
   switch (kType) {
@@ -279,8 +279,7 @@ void SendMessage(const kPacketType kType, const char *string1,
 
       // account
       AccountLoginRequest *login = ca_msg.mutable_login();
-      login->set_account_id(string1);
-      login->set_auth_key(string2);
+      login->set_local_account(string1);
     }
     break;
   case kMakeRoomGameStart: {
