@@ -352,7 +352,7 @@ void NetworkInitialize() {
 
 
 void SendMessage(const kPacketType kType, const char *id_string,
-                 const char *passward_string) {
+                 const char */*passward_string*/) {
   // set account message type
   ClientAccountMessage ca_msg;
   switch (kType) {
@@ -361,8 +361,7 @@ void SendMessage(const kPacketType kType, const char *id_string,
 
       // account
       AccountLoginRequest *login = ca_msg.mutable_login();
-      login->set_account_id(id_string);
-      login->set_auth_key(passward_string);
+      login->set_local_account(id_string);
     }
     break;
   case kLoadLevel:  // handling on other function with different arguments
