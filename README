@@ -3,3 +3,5 @@ The following branches (i.e. examples) are available.
 
   stage1-single-play: the most basic one. it's for a single play without a login step.
   stage2-single-with-login: stage1 plus a login step.
+  stage2.5-timer: it is almost the same as the stage2. additionally server send to client time messages.
+  stage3-single-with-lobby: stage2 plus game lobby. it use funapi objects.
