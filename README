@@ -34,7 +34,8 @@ Next, run the client.
 $ cd client/build; ./pacman
 
 
-You can control Pacman using arrow keys, and Ctrl+C will terminate the client.
-Depending on branch, you may be able to use `q' key to return to the top menu.
+You can control Pacman using arrow keys, and Ctrl+C or 'q' key will terminate
+the client.
+
 
 Enjoy the game!
