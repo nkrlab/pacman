@@ -1,5 +1,68 @@
-This project illustrates examples as different branches.
-The following branches (i.e. examples) are available.
+===============================================================================
+Introduction
+===============================================================================
+This is an example project that illustrates how to use the Nexon Funapi.
+It consists of a client part and a server part. You need to build both of them
+to test.
 
-  stage1-single-play: the most basic one. it's for a single play without a login step.
-  stage2-single-with-login: stage1 plus a login step.
+
+===============================================================================
+How to compile
+===============================================================================
+Both of client and server can be built using trivial `configure && make'.
+
+$ cd client  (or cd server)
+$ ./boot.sh
+$ mkdir build
+$ cd build
+$ ../configure
+$ make
+
+
+===============================================================================
+How to run
+===============================================================================
+First run the server. After building a server, you can see a file named
+`pacman-launcher'. This is a shell script which pre-loads required libraries
+including Funapi. Simply run the script.
+
+$ cd server/build;
+$ ./pacman-launcher
+
+
+Next, run the client.
+
+$ cd client/build;
+$ ./pacman
+
+
+===============================================================================
+How to play
+===============================================================================
+Login screen shows up, you can enter id and password.
+For now, any word will be okay for purpose of test.
+
+
+Next, you can see a list of room. (a.k.a lobby)
+If you want to refresh room list, use 'l' key.
+If you want to make a room, use 'c' key.
+In make room screen, you can choose a duel or single room using space key.
+If you want to logout, use 'q' key.
+
+
+If you made a duel room, you will wait for other player's join.
+When other player join to your room, game start automatically.
+
+
+Or you may want to join to other player's room.
+In this case, you should use 'j' key in lobby and enter room number.
+
+
+You can control Pacman using arrow keys, and 'q' key  will return to lobby.
+
+
+Any time you want to terminate client immediately, Ctrl+C key will help you.
+but it is not recommanded because it does not logout.
+
+
+Enjoy the game!
